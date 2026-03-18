@@ -1,27 +1,78 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Briefcase, Users, FileText, DollarSign, Plus } from 'lucide-react';
+import { Briefcase, Users, FileText, DollarSign, Plus, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Dashboard - TradeSuite',
   description: 'Manage your trade business',
 };
 
-// Mock data - will be replaced with Directus API calls
-const stats = [
-  { label: 'Active Clients', value: '24', change: '+3 this month' },
-  { label: 'Pending Jobs', value: '8', change: '2 scheduled today' },
-  { label: 'Outstanding Invoices', value: '$12,450', change: '4 overdue' },
-  { label: 'This Month Revenue', value: '$28,900', change: '+15% vs last month' },
-];
+// Server-side data fetching
+async function getDashboardData() {
+  const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus-production-1dd5.up.railway.app';
+  
+  try {
+    // Fetch all data in parallel
+    const [clientsRes, jobsRes, invoicesRes] = await Promise.all([
+      fetch(`${DIRECTUS_URL}/items/clients?limit=5&sort=-date_created`, { 
+        next: { revalidate: 60 } // Cache for 60 seconds
+      }),
+      fetch(`${DIRECTUS_URL}/items/jobs?limit=5&sort=-scheduled_date`, { 
+        next: { revalidate: 60 }
+      }),
+      fetch(`${DIRECTUS_URL}/items/invoices?limit=5&sort=-date_created`, { 
+        next: { revalidate: 60 }
+      }),
+    ]);
 
-const recentJobs = [
-  { id: '1', client: 'Oakwood Apartments', title: 'Panel Upgrade', status: 'In Progress', date: 'Today' },
-  { id: '2', client: 'John Smith', title: 'Outdoor Lighting', status: 'Scheduled', date: 'Tomorrow' },
-  { id: '3', client: 'City Mall', title: 'Emergency Repair', status: 'Completed', date: 'Yesterday' },
-];
+    const [clients, jobs, invoices] = await Promise.all([
+      clientsRes.ok ? clientsRes.json() : { data: [] },
+      jobsRes.ok ? jobsRes.json() : { data: [] },
+      invoicesRes.ok ? invoicesRes.json() : { data: [] },
+    ]);
 
-export default function DashboardPage() {
+    // Calculate stats
+    const totalRevenue = invoices.data?.reduce((sum: number, inv: any) => 
+      inv.status === 'paid' ? sum + (inv.amount || 0) : sum, 0) || 0;
+    
+    const outstandingInvoices = invoices.data?.filter((inv: any) => inv.status !== 'paid').length || 0;
+
+    return {
+      clients: clients.data || [],
+      jobs: jobs.data || [],
+      invoices: invoices.data || [],
+      stats: {
+        clients: clients.data?.length || 0,
+        activeJobs: jobs.data?.filter((j: any) => j.status !== 'completed').length || 0,
+        outstandingInvoices,
+        revenue: totalRevenue,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    return {
+      clients: [],
+      jobs: [],
+      invoices: [],
+      stats: {
+        clients: 0,
+        activeJobs: 0,
+        outstandingInvoices: 0,
+        revenue: 0,
+      },
+    };
+  }
+}
+
+export default async function DashboardPage() {
+  const data = await getDashboardData();
+  const stats = [
+    { label: 'Clients', value: data.stats.clients, change: 'Active clients' },
+    { label: 'Active Jobs', value: data.stats.activeJobs, change: 'In progress' },
+    { label: 'Outstanding', value: `$${data.stats.outstandingInvoices.toLocaleString()}`, change: 'Pending invoices' },
+    { label: 'Revenue', value: `$${data.stats.revenue.toLocaleString()}`, change: 'Total paid' },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -82,29 +133,64 @@ export default function DashboardPage() {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h2 className="text-lg font-bold">Recent Jobs</h2>
-            <Link href="/jobs" className="text-blue-600 hover:text-blue-700 text-sm font-medium">View all →</Link>
+            <Link href="/jobs" className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+              View all <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
           <div className="divide-y divide-gray-200">
-            {recentJobs.map((job) => (
-              <div key={job.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
-                <div>
-                  <p className="font-medium text-gray-900">{job.title}</p>
-                  <p className="text-sm text-gray-500">{job.client}</p>
+            {data.jobs.length > 0 ? (
+              data.jobs.map((job: any) => (
+                <div key={job.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+                  <div>
+                    <p className="font-medium text-gray-900">{job.title}</p>
+                    <p className="text-sm text-gray-500">{job.description?.substring(0, 50) || 'No description'}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                      job.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      job.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {job.status || 'pending'}
+                    </span>
+                    <p className="text-sm text-gray-500 mt-1">{job.scheduled_date || 'Not scheduled'}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                    job.status === 'Completed' ? 'bg-green-100 text-green-700' :
-                    job.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {job.status}
-                  </span>
-                  <p className="text-sm text-gray-500 mt-1">{job.date}</p>
-                </div>
+              ))
+            ) : (
+              <div className="px-6 py-8 text-center text-gray-500">
+                No jobs yet. Create your first job to get started.
               </div>
-            ))}
+            )}
           </div>
         </div>
+
+        {/* Recent Clients */}
+        {data.clients.length > 0 && (
+          <div className="mt-8 bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+              <h2 className="text-lg font-bold">Recent Clients</h2>
+              <Link href="/clients" className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+                View all <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {data.clients.slice(0, 3).map((client: any) => (
+                <div key={client.id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+                  <div>
+                    <p className="font-medium text-gray-900">{client.name}</p>
+                    <p className="text-sm text-gray-500">{client.email}</p>
+                  </div>
+                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                    client.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {client.status || 'active'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
