@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { login } from '@/lib/directus';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -18,8 +17,18 @@ export function Login() {
     setLoading(true);
 
     try {
-      const result = await login(email, password);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
+        // Store token in localStorage
+        localStorage.setItem('directus_token', result.data.access_token);
+        localStorage.setItem('directus_refresh_token', result.data.refresh_token);
         router.push('/dashboard');
       } else {
         setError(result.error || 'Invalid credentials');

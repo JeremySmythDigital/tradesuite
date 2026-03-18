@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { register, login } from '@/lib/directus';
 
 export function Signup() {
   const [formData, setFormData] = useState({
@@ -38,19 +37,37 @@ export function Signup() {
     setLoading(true);
 
     try {
-      // Register user
-      const regResult = await register({
-        email: formData.email,
-        password: formData.password,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
+      // Register user via API route
+      const regResponse = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+        }),
       });
-      
+
+      const regResult = await regResponse.json();
+
       if (regResult.success) {
         // Auto-login after registration
-        const loginResult = await login(formData.email, formData.password);
+        const loginResponse = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        const loginResult = await loginResponse.json();
+
         if (loginResult.success) {
-          router.push('/onboarding');
+          localStorage.setItem('directus_token', loginResult.data.access_token);
+          localStorage.setItem('directus_refresh_token', loginResult.data.refresh_token);
+          router.push('/dashboard');
         } else {
           router.push('/login');
         }
