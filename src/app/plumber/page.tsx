@@ -1,32 +1,32 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Briefcase, Users, Droplets, Shield, Clock, FileText, DollarSign, Calendar, Wrench } from 'lucide-react';
+import { Briefcase, Users, Droplet, FileText, DollarSign, Calendar, MapPin, Wrench } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Plumber CRM - TradeSuite',
-  description: 'The CRM built specifically for plumbers. Manage drain cleaning, repipes, fixture installs, and more.',
-  keywords: 'plumber CRM, plumbing contractor software, plumber scheduling, drain cleaning tracking',
+  description: 'The CRM built specifically for plumbers. Manage service calls, installations, inspections, and more.',
+  keywords: 'plumber CRM, plumbing contractor software, plumbing scheduling, service call tracking',
 };
 
 const features = [
-  { icon: Wrench, title: 'Service Calls', description: 'Track emergency calls, after-hours rates, and response times.' },
-  { icon: Droplets, title: 'Drain Cleaning', description: 'Log jetting jobs, camera inspections, and recurring maintenance.' },
-  { icon: FileText, title: 'Estimates', description: 'Generate accurate quotes for repipes and fixture installs.' },
-  { icon: Calendar, title: 'Scheduling', description: 'Coordinate trucks, techs, and on-call rotations.' },
-  { icon: DollarSign, title: 'Invoicing', description: 'Bill for materials, labor, and emergency surcharges easily.' },
-  { icon: Shield, title: 'Permits', description: 'Track permit applications and inspection schedules.' },
+  { icon: Droplet, title: 'Service Calls', description: 'Track emergency calls, drain cleaning, and repairs.' },
+  { icon: Wrench, title: 'Installations', description: 'Manage water heaters, fixtures, and piping projects.' },
+  { icon: FileText, title: 'Estimates', description: 'Create accurate quotes with parts and labor breakdown.' },
+  { icon: MapPin, title: 'Site Notes', description: 'Save property details, shut-off locations, and access codes.' },
+  { icon: DollarSign, title: 'Invoicing', description: 'Send invoices, collect payments, and track aging.' },
+  { icon: Calendar, title: 'Scheduling', description: 'Dispatch techs efficiently and reduce drive time.' },
 ];
 
 const stats = [
-  { value: '38%', label: 'Faster invoicing' },
-  { value: '3.2x', label: 'More estimates closed' },
-  { value: '6hrs', label: 'Saved per week' },
-  { value: '98%', label: 'Customer satisfaction' },
+  { value: '52%', label: 'Faster invoicing' },
+  { value: '4.2x', label: 'Quote-to-close rate' },
+  { value: '10hrs', label: 'Saved per week' },
+  { value: '97%', label: 'Customer satisfaction' },
 ];
 
 const testimonials = [
-  { name: 'Dave Williams', company: 'ClearFlow Plumbing', quote: 'My after-hours calls went from chaos to organized. Customers love the text updates.' },
-  { name: 'Lisa Martinez', company: 'Martinez & Sons Plumbing', quote: 'Estimates that used to take 30 minutes now take 5. Pre-built templates are a game changer.' },
+  { name: 'Joe Martinez', company: 'Clear Flow Plumbing', quote: 'I used to lose track of which houses had what fixtures. Now every property has photos and notes.' },
+  { name: 'Dan Thompson', company: 'Thompson Plumbing Co', quote: 'Emergency calls at 2am? My dispatch sees the schedule on their phone. Game changer.' },
 ];
 
 export default function PlumberPage() {
@@ -54,11 +54,11 @@ export default function PlumberPage() {
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                The CRM Built for <span className="text-yellow-400">Plumbers</span>
+                The CRM Built for <span className="text-blue-200">Plumbers</span>
               </h1>
               <p className="text-xl text-blue-100 mb-8">
-                Drain cleaning. Repipes. Fixture installs. Emergency calls.
-                <br />Software that understands what you actually do all day.
+                Emergency calls. Drain cleaning. Water heaters. Remodels.
+                <br />Every job tracked. Every customer happy.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/signup?trade=plumber" className="px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-colors font-bold text-lg shadow-lg">
@@ -72,7 +72,7 @@ export default function PlumberPage() {
             <div className="lg:w-1/2 grid grid-cols-2 gap-4">
               {stats.map((stat) => (
                 <div key={stat.label} className="bg-white/10 backdrop-blur rounded-xl p-6 text-center">
-                  <p className="text-3xl font-bold text-yellow-400">{stat.value}</p>
+                  <p className="text-3xl font-bold text-blue-200">{stat.value}</p>
                   <p className="text-blue-100">{stat.label}</p>
                 </div>
               ))}
@@ -84,9 +84,9 @@ export default function PlumberPage() {
       <section id="features" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-bold text-4xl mb-4">Plumbing Features That Actually Help</h2>
+            <h2 className="font-bold text-4xl mb-4">Plumbing Features That Work</h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Not generic CRM features repurposed. Built by plumbers who know the difference between a snip and snake job.
+              From emergency calls to full remodels. Tools built for how plumbers actually work.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -120,8 +120,8 @@ export default function PlumberPage() {
 
       <section className="py-24 bg-blue-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-bold text-4xl text-white mb-6">Ready to Stop Chasing Paperwork?</h2>
-          <p className="text-blue-100 text-xl mb-8">Join 400+ plumbers who got their evenings back.</p>
+          <h2 className="font-bold text-4xl text-white mb-6">Ready to Stop Leaking Revenue?</h2>
+          <p className="text-blue-100 text-xl mb-8">Join 420+ plumbers who get paid faster with TradeSuite.</p>
           <Link href="/signup?trade=plumber" className="inline-block px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-colors font-bold text-lg shadow-lg">
             Start Your Free Trial
           </Link>

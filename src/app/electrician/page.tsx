@@ -1,38 +1,37 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Briefcase, Users, Zap, Shield, Clock, FileText, DollarSign, Calendar, TrendingUp, CheckCircle } from 'lucide-react';
+import { Briefcase, Users, LightningBolt, FileText, DollarSign, Calendar, Shield, Building } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Electrician CRM - TradeSuite',
-  description: 'The CRM built specifically for electricians. Manage panel upgrades, rewiring jobs, inspections, and more.',
-  keywords: 'electrician CRM, electrical contractor software, electrician scheduling, panel upgrade tracking',
+  description: 'The CRM built specifically for electricians. Manage service calls, panel upgrades, inspections, and more.',
+  keywords: 'electrician CRM, electrical contractor software, electrical scheduling, service call tracking',
 };
 
 const features = [
-  { icon: Zap, title: 'Panel Upgrades', description: 'Track 100-400A upgrades with material lists and progress photos.' },
-  { icon: FileText, title: 'Inspection Reports', description: 'Generate professional reports for city inspections.' },
-  { icon: Users, title: 'Client Portal', description: 'Homeowners view job progress and approve estimates online.' },
-  { icon: Calendar, title: 'Job Scheduling', description: 'Drag-and-drop calendar for crews and trucks.' },
-  { icon: DollarSign, title: 'Material Tracking', description: 'Track wire, breakers, panels by job with cost reports.' },
-  { icon: Shield, title: 'License Management', description: 'Never let licenses or insurance expire unnoticed.' },
+  { icon: LightningBolt, title: 'Service Calls', description: 'Track emergency calls, scheduled maintenance, and installations.' },
+  { icon: Building, title: 'Panel Upgrades', description: 'Manage upgrade quotes, permits, and installation schedules.' },
+  { icon: FileText, title: 'Estimates', description: 'Create professional quotes with material and labor breakdowns.' },
+  { icon: Shield, title: 'Inspections', description: 'Track inspection dates, permit statuses, and compliance.' },
+  { icon: DollarSign, title: 'Invoicing', description: 'Send invoices, track payments, and manage aging reports.' },
+  { icon: Calendar, title: 'Scheduling', description: 'Calendar view of all jobs, team availability, and reminders.' },
 ];
 
 const stats = [
-  { value: '43%', label: 'Faster invoicing' },
-  { value: '2.8x', label: 'More estimates closed' },
-  { value: '8hrs', label: 'Saved per week' },
-  { value: '99%', label: 'Customer satisfaction' },
+  { value: '45%', label: 'Faster invoicing' },
+  { value: '3.8x', label: 'Quote-to-close rate' },
+  { value: '12hrs', label: 'Saved per week' },
+  { value: '98%', label: 'Customer satisfaction' },
 ];
 
 const testimonials = [
-  { name: 'Mike Rodriguez', company: 'Rodriguez Electric', quote: 'Finally, software that understands my business. Panel upgrades used to be a paperwork nightmare.' },
-  { name: 'Sarah Chen', company: 'Bright Spark Electric', quote: 'The inspection report generator alone saves me hours every week.' },
+  { name: 'Mike Roberts', company: 'Roberts Electric LLC', quote: 'Panel upgrade quotes used to take me an hour. Now I crank them out in 10 minutes.' },
+  { name: 'Sarah Chen', company: 'Bright Spark Electric', quote: 'Finally, software that understands what electricians actually do. No more generic CRMs.' },
 ];
 
 export default function ElectricianPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
@@ -50,20 +49,19 @@ export default function ElectricianPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-20">
+      <section className="bg-gradient-to-br from-yellow-500 to-orange-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                The CRM Built for <span className="text-yellow-400">Electricians</span>
+                The CRM Built for <span className="text-yellow-200">Electricians</span>
               </h1>
-              <p className="text-xl text-blue-100 mb-8">
-                Panel upgrades. Rewiring. Service calls. Inspections.
-                <br />Stop fumbling with spreadsheets. Get software that speaks your language.
+              <p className="text-xl text-yellow-100 mb-8">
+                Service calls. Panel upgrades. Inspections. Remodels.
+                <br />Stop juggling spreadsheets. Start closing more jobs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/signup?trade=electrician" className="px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-colors font-bold text-lg shadow-lg">
+                <Link href="/signup?trade=electrician" className="px-8 py-4 bg-white text-orange-700 rounded-xl hover:bg-yellow-50 transition-colors font-bold text-lg shadow-lg">
                   Start Free Trial
                 </Link>
                 <Link href="#features" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-colors font-medium text-lg">
@@ -74,8 +72,8 @@ export default function ElectricianPage() {
             <div className="lg:w-1/2 grid grid-cols-2 gap-4">
               {stats.map((stat) => (
                 <div key={stat.label} className="bg-white/10 backdrop-blur rounded-xl p-6 text-center">
-                  <p className="text-3xl font-bold text-yellow-400">{stat.value}</p>
-                  <p className="text-blue-100">{stat.label}</p>
+                  <p className="text-3xl font-bold text-yellow-200">{stat.value}</p>
+                  <p className="text-yellow-100">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -83,19 +81,18 @@ export default function ElectricianPage() {
         </div>
       </section>
 
-      {/* Features */}
       <section id="features" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-bold text-4xl mb-4">Built for How You Work</h2>
+            <h2 className="font-bold text-4xl mb-4">Built for Electrical Contractors</h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Every feature designed by electricians, for electricians. No generic CRM workarounds.
+              Everything you need to run your electrical business. No custom fields. No workarounds.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <div key={feature.title} className="p-6 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all bg-gray-50">
-                <feature.icon className="w-10 h-10 text-blue-600 mb-4" />
+              <div key={feature.title} className="p-6 rounded-xl border border-gray-200 hover:border-yellow-300 hover:shadow-lg transition-all bg-gray-50">
+                <feature.icon className="w-10 h-10 text-yellow-600 mb-4" />
                 <h3 className="font-bold text-xl mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.description}</p>
               </div>
@@ -104,7 +101,6 @@ export default function ElectricianPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -122,44 +118,16 @@ export default function ElectricianPage() {
         </div>
       </section>
 
-      {/* Workflow */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-bold text-4xl mb-4">From Call to Payment in 4 Steps</h2>
-          </div>
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { step: '1', title: 'Call Comes In', desc: 'Log the service call, capture client details automatically.' },
-              { step: '2', title: 'Estimate Sent', desc: 'Pre-built templates for common jobs like panel upgrades.' },
-              { step: '3', title: 'Work Done', desc: 'Track progress, materials, and hours in real-time.' },
-              { step: '4', title: 'Get Paid', desc: 'Invoice on the spot, accept card payments, done.' },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-600 text-white font-bold text-xl flex items-center justify-center mx-auto mb-4">
-                  {item.step}
-                </div>
-                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 bg-blue-600">
+      <section className="py-24 bg-yellow-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-bold text-4xl text-white mb-6">Ready to Grow Your Electrical Business?</h2>
-          <p className="text-blue-100 text-xl mb-8">Join 500+ electricians who switched from paper to TradeSuite.</p>
-          <Link href="/signup?trade=electrician" className="inline-block px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-colors font-bold text-lg shadow-lg">
+          <h2 className="font-bold text-4xl text-white mb-6">Ready to Power Up Your Business?</h2>
+          <p className="text-yellow-100 text-xl mb-8">Join 850+ electricians who close more jobs with TradeSuite.</p>
+          <Link href="/signup?trade=electrician" className="inline-block px-8 py-4 bg-white text-yellow-700 rounded-xl hover:bg-yellow-50 transition-colors font-bold text-lg shadow-lg">
             Start Your Free Trial
           </Link>
-          <p className="text-blue-200 text-sm mt-4">No credit card required. Cancel anytime.</p>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="py-12 bg-gray-900 text-gray-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -167,11 +135,6 @@ export default function ElectricianPage() {
               <Briefcase className="w-6 h-6 text-blue-500" />
               <span className="font-bold text-white">TradeSuite</span>
             </Link>
-            <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-white">Privacy</Link>
-              <Link href="/terms" className="hover:text-white">Terms</Link>
-              <Link href="/support" className="hover:text-white">Support</Link>
-            </div>
           </div>
         </div>
       </footer>
