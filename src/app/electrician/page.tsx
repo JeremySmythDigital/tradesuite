@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Briefcase, Users, LightningBolt, FileText, DollarSign, Calendar, Shield, Building } from 'lucide-react';
+import { Briefcase, Users, Zap, FileText, DollarSign, Calendar, Shield, Building, Gamepad2 } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Electrician CRM - TradeSuite',
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: LightningBolt, title: 'Service Calls', description: 'Track emergency calls, scheduled maintenance, and installations.' },
+  { icon: Zap, title: 'Service Calls', description: 'Track emergency calls, scheduled maintenance, and installations.' },
   { icon: Building, title: 'Panel Upgrades', description: 'Manage upgrade quotes, permits, and installation schedules.' },
   { icon: FileText, title: 'Estimates', description: 'Create professional quotes with material and labor breakdowns.' },
   { icon: Shield, title: 'Inspections', description: 'Track inspection dates, permit statuses, and compliance.' },
@@ -40,6 +40,10 @@ export default function ElectricianPage() {
               <span className="font-bold text-2xl">TradeSuite</span>
             </Link>
             <div className="flex items-center gap-4">
+              <Link href="/electrician/game" className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium">
+                <Gamepad2 className="w-4 h-4" />
+                Play Game
+              </Link>
               <Link href="/login" className="text-gray-600 hover:text-gray-900">Sign In</Link>
               <Link href="/signup?trade=electrician" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                 Start Free Trial
@@ -64,8 +68,9 @@ export default function ElectricianPage() {
                 <Link href="/signup?trade=electrician" className="px-8 py-4 bg-white text-orange-700 rounded-xl hover:bg-yellow-50 transition-colors font-bold text-lg shadow-lg">
                   Start Free Trial
                 </Link>
-                <Link href="#features" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-colors font-medium text-lg">
-                  See Features
+                <Link href="/electrician/game" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-colors font-medium text-lg flex items-center gap-2 justify-center">
+                  <Gamepad2 className="w-5 h-5" />
+                  Try the Simulator
                 </Link>
               </div>
             </div>
@@ -76,6 +81,54 @@ export default function ElectricianPage() {
                   <p className="text-yellow-100">{stat.label}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Game Promo Section */}
+      <section className="py-16 bg-gradient-to-r from-purple-600 to-indigo-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                🎮 Try the Electrician Business Simulator
+              </h2>
+              <p className="text-purple-100 text-lg mb-6">
+                Run your own electrical business for 30 days. Take jobs, manage customers, and see why electricians love TradeSuite.
+              </p>
+              <ul className="text-purple-100 space-y-2 mb-6">
+                <li>✓ Learn to prioritize emergency calls</li>
+                <li>✓ See how jobs affect your revenue</li>
+                <li>✓ Experience what TradeSuite manages for you</li>
+              </ul>
+              <Link
+                href="/electrician/game"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-purple-700 rounded-xl font-bold text-lg shadow-lg hover:bg-purple-50 transition-colors"
+              >
+                <Gamepad2 className="w-5 h-5" />
+                Play Now - Takes 2 Minutes
+              </Link>
+            </div>
+            <div className="md:w-1/2 bg-white/10 backdrop-blur rounded-2xl p-8">
+              <div className="grid grid-cols-2 gap-4 text-white">
+                <div className="bg-white/20 rounded-lg p-4 text-center">
+                  <p className="text-4xl font-bold">30</p>
+                  <p className="text-sm">Days Simulated</p>
+                </div>
+                <div className="bg-white/20 rounded-lg p-4 text-center">
+                  <p className="text-4xl font-bold">$$</p>
+                  <p className="text-sm">Revenue Tracking</p>
+                </div>
+                <div className="bg-white/20 rounded-lg p-4 text-center">
+                  <p className="text-4xl font-bold">⚡</p>
+                  <p className="text-sm">Emergency Jobs</p>
+                </div>
+                <div className="bg-white/20 rounded-lg p-4 text-center">
+                  <p className="text-4xl font-bold">📊</p>
+                  <p className="text-sm">Business Stats</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
