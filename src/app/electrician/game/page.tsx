@@ -12,14 +12,7 @@ interface Job {
   address: string;
   value: number;
   urgency: 'emergency' | 'scheduled' | 'flexible';
-  daysOld: number;
-  notes: string;
-}
-
-interface LostRevenue {
-  reason: string;
-  amount: number;
-  job: string;
+  description: string;
 }
 
 type GamePhase = 'intro' | 'chaos' | 'transition' | 'tradesuite' | 'results';
@@ -32,48 +25,50 @@ const JOB_TYPES: Record<string, { label: string; basePrice: number; time: number
 };
 
 const CUSTOMERS = [
-  { name: 'Johnson', phone: '555-0101', address: '123 Main St' },
-  { name: 'Williams', phone: '555-0102', address: '456 Oak Ave' },
-  { name: 'Garcia', phone: '555-0103', address: '789 Elm Blvd' },
-  { name: 'Brown', phone: '555-0104', address: '321 Pine Lane' },
-  { name: 'Martinez', phone: '555-0105', address: '654 Maple Dr' },
-  { name: 'Miller', phone: '555-0106', address: '987 Cedar Ct' },
+  { name: 'Johnson Residence', phone: '555-0101', address: '123 Main St' },
+  { name: 'Williams Property', phone: '555-0102', address: '456 Oak Ave' },
+  { name: 'Garcia Home', phone: '555-0103', address: '789 Elm Blvd' },
+  { name: 'Brown Residence', phone: '555-0104', address: '321 Pine Lane' },
+  { name: 'Martinez Family', phone: '555-0105', address: '654 Maple Dr' },
+  { name: 'Miller House', phone: '555-0106', address: '987 Cedar Ct' },
+  { name: 'Davis Estate', phone: '555-0107', address: '147 Birch Way' },
+  { name: 'Wilson Property', phone: '555-0108', address: '258 Willow Rd' },
 ];
 
-const NOTES = [
-  'Customer called about outlet not working',
-  'Wants quote for 200 amp panel',
-  'Annual inspection due',
-  'Kitchen remodel - need rough-in',
+const DESCRIPTIONS = [
+  'Customer reported outlet not working',
+  'Needs 200 amp panel upgrade quote',
+  'Annual safety inspection due',
+  'Kitchen remodel - need rough-in estimate',
   'Lights flickering in living room',
-  'Need estimate for new circuit',
+  'Adding circuit for new AC unit',
+  'Whole house surge protector install',
+  'Ceiling fan installation needed',
+  'Outdoor outlets not working',
+  'Breaker tripping frequently',
 ];
 
-function generateJobs(day: number): Job[] {
-  const jobs: Job[] = [];
-  const types = Object.keys(JOB_TYPES);
-  const count = Math.min(3 + Math.floor(day / 2), 8);
+function generateJob(): Job {
+  const types = Object.keys(JOB_TYPES) as Job['type'][];
+  const type = types[Math.floor(Math.random() * types.length)];
+  const customer = CUSTOMERS[Math.floor(Math.random() * CUSTOMERS.length)];
+  const urgency: Job['urgency'] = Math.random() > 0.8 ? 'emergency' : Math.random() > 0.5 ? 'scheduled' : 'flexible';
+  const multiplier = urgency === 'emergency' ? 1.5 : 1;
   
-  for (let i = 0; i < count; i++) {
-    const type = types[Math.floor(Math.random() * types.length)] as Job['type'];
-    const customer = CUSTOMERS[Math.floor(Math.random() * CUSTOMERS.length)];
-    const urgency: Job['urgency'] = Math.random() > 0.8 ? 'emergency' : Math.random() > 0.5 ? 'scheduled' : 'flexible';
-    const multiplier = urgency === 'emergency' ? 1.5 : 1;
-    
-    jobs.push({
-      id: `job-${day}-${i}`,
-      type,
-      customer: customer.name,
-      phone: customer.phone,
-      address: customer.address,
-      value: Math.round(JOB_TYPES[type].basePrice * multiplier),
-      urgency,
-      daysOld: Math.floor(Math.random() * 3),
-      notes: NOTES[Math.floor(Math.random() * NOTES.length)],
-    });
-  }
-  
-  return jobs;
+  return {
+    id: Math.random().toString(36).substring(7),
+    type,
+    customer: customer.name,
+    phone: customer.phone,
+    address: customer.address,
+    value: Math.round(JOB_TYPES[type].basePrice * multiplier),
+    urgency,
+    description: DESCRIPTIONS[Math.floor(Math.random() * DESCRIPTIONS.length)],
+  };
+}
+
+function generateDayJobs(count: number): Job[] {
+  return Array.from({ length: count }, generateJob);
 }
 
 export default function ElectricianGame() {
@@ -81,113 +76,132 @@ export default function ElectricianGame() {
   const [day, setDay] = useState(1);
   const [chaosJobs, setChaosJobs] = useState<Job[]>([]);
   const [tradesuiteJobs, setTradesuiteJobs] = useState<Job[]>([]);
+  const [completedJobs, setCompletedJobs] = useState<Set<string>>(new Set());
   const [chaosRevenue, setChaosRevenue] = useState(0);
   const [tradesuiteRevenue, setTradesuiteRevenue] = useState(0);
-  const [lostRevenue, setLostRevenue] = useState<LostRevenue[]>([]);
+  const [lostRevenue, setLostRevenue] = useState<{ reason: string; amount: number }[]>([]);
   const [message, setMessage] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
-  const [completedJobs, setCompletedJobs] = useState<string[]>([]);
-  const [missedEmergency, setMissedEmergency] = useState(false);
+  const [showDaySummary, setShowDaySummary] = useState(false);
+  const [dayResults, setDayResults] = useState<{ completed: number; revenue: number; lost: number } | null>(null);
 
-  // Initialize chaos jobs
+  // Initialize jobs for each phase
   useEffect(() => {
     if (phase === 'chaos' && chaosJobs.length === 0) {
-      setChaosJobs(generateJobs(1));
+      setChaosJobs(generateDayJobs(4));
+      setCompletedJobs(new Set());
     }
     if (phase === 'tradesuite' && tradesuiteJobs.length === 0) {
-      setTradesuiteJobs(generateJobs(1));
+      setTradesuiteJobs(generateDayJobs(4));
+      setCompletedJobs(new Set());
     }
   }, [phase]);
 
-  // Calculate what's visible (chaos mode = disorganized)
-  const visibleChaosJobs = chaosJobs.filter(job => 
-    searchTerm === '' || 
-    job.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.address.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Count remaining jobs
+  const remainingChaosJobs = chaosJobs.filter(j => !completedJobs.has(j.id));
+  const remainingTradesuiteJobs = tradesuiteJobs.filter(j => !completedJobs.has(j.id));
 
-  // Chaos mode: Complete a job
+  // Chaos: Complete a job
   const handleChaosComplete = (job: Job) => {
-    if (job.urgency === 'emergency') {
-      // Emergency jobs in chaos mode might have been missed
-      const hoursSinceCall = job.daysOld * 24 + Math.random() * 12;
-      if (hoursSinceCall > 4) {
-        setMissedEmergency(true);
-        setLostRevenue(prev => [...prev, {
-          reason: 'Emergency call went to voicemail - customer called competitor',
-          amount: job.value,
-          job: job.customer,
-        }]);
-        setChaosJobs(prev => prev.filter(j => j.id !== job.id));
-        setMessage(`You lost ${job.customer} - they called someone else while you were searching.`);
-        return;
-      }
-    }
+    if (completedJobs.has(job.id)) return; // Prevent double completion
     
+    setCompletedJobs(prev => new Set([...prev, job.id]));
     setChaosRevenue(prev => prev + job.value);
-    setCompletedJobs(prev => [...prev, job.id]);
-    setChaosJobs(prev => prev.filter(j => j.id !== job.id));
-    setMessage(`✅ Completed ${JOB_TYPES[job.type].label} for ${job.customer} - $${job.value.toLocaleString()}`);
+    setMessage(`✓ Completed ${JOB_TYPES[job.type].label} for $${job.value.toLocaleString()}`);
   };
 
-  // Chaos mode: Skip a job
-  const handleChaosSkip = (jobId: string) => {
-    const job = chaosJobs.find(j => j.id === jobId);
-    if (job) {
-      setLostRevenue(prev => [...prev, {
-        reason: 'Skipped - forgot to follow up',
-        amount: Math.round(job.value * 0.3),
-        job: job.customer,
-      }]);
-    }
-    setChaosJobs(prev => prev.filter(j => j.id !== jobId));
-    setMessage('Job skipped. Customer will call someone else.');
+  // Chaos: Skip a job (lose customer)
+  const handleChaosSkip = (job: Job) => {
+    if (completedJobs.has(job.id)) return;
+    
+    setCompletedJobs(prev => new Set([...prev, job.id]));
+    const lost = Math.round(job.value * 0.3);
+    setLostRevenue(prev => [...prev, { reason: `Skipped ${job.customer}`, amount: lost }]);
+    setMessage(`⚠ Lost ${job.customer} - they called someone else`);
   };
 
-  // Next day (chaos mode)
-  const handleChaosNextDay = () => {
-    // Count lost opportunities
-    chaosJobs.forEach(job => {
-      if (job.urgency === 'emergency' && job.daysOld >= 1) {
-        setLostRevenue(prev => [...prev, {
-          reason: 'Lost emergency call to competitor',
-          amount: job.value,
-          job: job.customer,
+  // Chaos: End day
+  const handleChaosEndDay = () => {
+    // Calculate losses for unfinished jobs
+    const unfinished = remainingChaosJobs;
+    let dayLost = 0;
+    
+    unfinished.forEach(job => {
+      if (job.urgency === 'emergency') {
+        // Emergency jobs = total loss
+        setLostRevenue(prev => [...prev, { 
+          reason: `Missed emergency: ${job.customer}`, 
+          amount: job.value 
         }]);
-      } else if (Math.random() > 0.7) {
-        setLostRevenue(prev => [...prev, {
-          reason: 'Customer went with faster responder',
-          amount: Math.round(job.value * 0.5),
-          job: job.customer,
-        }]);
+        dayLost += job.value;
+      } else {
+        // Regular jobs = 30% chance customer calls competitor
+        if (Math.random() > 0.7) {
+          setLostRevenue(prev => [...prev, { 
+            reason: `${job.customer} went elsewhere`, 
+            amount: Math.round(job.value * 0.5) 
+          }]);
+          dayLost += Math.round(job.value * 0.5);
+        }
       }
     });
 
+    setDayResults({
+      completed: 4 - remainingChaosJobs.length,
+      revenue: chaosRevenue,
+      lost: dayLost,
+    });
+    setShowDaySummary(true);
+  };
+
+  // Chaos: Next day after summary
+  const handleChaosNextDay = () => {
+    setShowDaySummary(false);
+    setMessage('');
+    
     if (day >= 5) {
       setPhase('transition');
       return;
     }
-
+    
     setDay(prev => prev + 1);
-    setChaosJobs(prev => [...prev.filter(j => j.daysOld <= 1), ...generateJobs(day + 1)]);
+    setChaosJobs(generateDayJobs(4));
+    setCompletedJobs(new Set());
   };
 
-  // TradeSuite mode: Complete a job
+  // TradeSuite: Complete a job
   const handleTradesuiteComplete = (job: Job) => {
+    if (completedJobs.has(job.id)) return;
+    
+    setCompletedJobs(prev => new Set([...prev, job.id]));
     setTradesuiteRevenue(prev => prev + job.value);
-    setTradesuiteJobs(prev => prev.filter(j => j.id !== job.id));
-    setMessage(`✅ ${job.urgency === 'emergency' ? '⚡ URGENT - Called immediately! ' : ''}Completed ${JOB_TYPES[job.type].label} for ${job.customer} - $${job.value.toLocaleString()}`);
+    
+    const bonus = job.urgency === 'emergency' ? ' (⚡ Emergency bonus included!)' : '';
+    setMessage(`✓ Completed ${JOB_TYPES[job.type].label} for ${job.customer} - $${job.value.toLocaleString()}${bonus}`);
   };
 
-  // Next day (TradeSuite)
+  // TradeSuite: End day
+  const handleTradesuiteEndDay = () => {
+    setDayResults({
+      completed: 4 - remainingTradesuiteJobs.length,
+      revenue: tradesuiteRevenue,
+      lost: 0, // No losses in TradeSuite
+    });
+    setShowDaySummary(true);
+  };
+
+  // TradeSuite: Next day
   const handleTradesuiteNextDay = () => {
+    setShowDaySummary(false);
+    setMessage('');
+    
     if (day >= 5) {
       setPhase('results');
       return;
     }
+    
     setDay(prev => prev + 1);
-    setTradesuiteJobs(prev => [...prev.filter(j => j.daysOld <= 1), ...generateJobs(day + 1)]);
+    setTradesuiteJobs(generateDayJobs(4));
+    setCompletedJobs(new Set());
   };
 
   // Intro Phase
@@ -198,32 +212,33 @@ export default function ElectricianGame() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">⚡ The Electrician's Dilemma</h1>
           <p className="text-gray-600 mb-6">A 5-day simulation comparing spreadsheet chaos vs TradeSuite</p>
           
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-            <h3 className="font-bold text-red-800 mb-2">📋 The Problem:</h3>
-            <ul className="text-red-700 text-sm space-y-1">
-              <li>• Calls come in fast - how do you prioritize?</li>
-              <li>• Emergency calls get lost in notes</li>
-              <li>• Forgetting to invoice = lost revenue</li>
-              <li>• Client info scattered across apps</li>
+          <div className="bg-gray-100 rounded-xl p-4 mb-6">
+            <h3 className="font-bold mb-2">📋 How This Works:</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li><strong>Day 1: Chaos Mode</strong> - Manage jobs manually. See what gets lost.</li>
+              <li><strong>Receive 4 jobs per day</strong> - Choose which to complete or skip</li>
+              <li><strong>Emergency jobs</strong> - Must complete same day or lose customer</li>
+              <li><strong>Day 6: TradeSuite</strong> - Same scenario, organized dashboard</li>
+              <li><strong>Compare results</strong> - See how much you lost to chaos</li>
             </ul>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
-            <h3 className="font-bold text-blue-800 mb-2">🎯 Your Mission:</h3>
-            <p className="text-blue-700 text-sm">
-              Run your electrical business for 5 days. First, try managing jobs with scattered notes. 
-              Then see how TradeSuite makes it effortless.
-            </p>
-          </div>
-
           <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-100 rounded-lg p-4">
-              <h4 className="font-bold text-gray-800 mb-2">Phase 1: Chaos</h4>
-              <p className="text-sm text-gray-600">Manage jobs manually. Search through notes. Miss opportunities.</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h4 className="font-bold text-red-800 mb-1">Chaos Mode</h4>
+              <ul className="text-xs text-red-700 space-y-1">
+                <li>• Jobs unsorted</li>
+                <li>• Easy to miss emergencies</li>
+                <li>• Lose jobs to competitors</li>
+              </ul>
             </div>
-            <div className="bg-green-100 rounded-lg p-4">
-              <h4 className="font-bold text-green-800 mb-2">Phase 2: TradeSuite</h4>
-              <p className="text-sm text-green-600">Same jobs, organized. See everything at a glance.</p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h4 className="font-bold text-green-800 mb-1">TradeSuite Mode</h4>
+              <ul className="text-xs text-green-700 space-y-1">
+                <li>• Urgent jobs highlighted</li>
+                <li>• All info visible</li>
+                <li>• Never miss a job</li>
+              </ul>
             </div>
           </div>
 
@@ -231,7 +246,50 @@ export default function ElectricianGame() {
             onClick={() => setPhase('chaos')}
             className="w-full px-8 py-4 bg-yellow-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-yellow-700 transition-colors"
           >
-            Start Day 1 →
+            Start Day 1 (Chaos Mode) →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Day Summary Modal
+  if (showDaySummary && dayResults) {
+    const isChaos = phase === 'chaos';
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {isChaos ? 'Day ' + day + ' Complete (Chaos Mode)' : 'Day ' + day + ' Complete'}
+          </h2>
+          
+          <div className="space-y-4 mb-6">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Jobs Completed:</span>
+              <span className="font-bold text-lg">{dayResults.completed}/4</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Revenue:</span>
+              <span className="font-bold text-lg text-green-600">${dayResults.revenue.toLocaleString()}</span>
+            </div>
+            {isChaos && dayResults.lost > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Lost:</span>
+                <span className="font-bold text-lg text-red-600">-${dayResults.lost.toLocaleString()}</span>
+              </div>
+            )}
+            {!isChaos && (
+              <div className="bg-green-50 rounded-lg p-3 text-center text-green-700 text-sm">
+                ✓ All jobs captured, none lost
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={isChaos ? handleChaosNextDay : handleTradesuiteNextDay}
+            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors"
+          >
+            {day >= 5 ? 'See Final Results →' : 'Start Day ' + (day + 1) + ' →'}
           </button>
         </div>
       </div>
@@ -243,11 +301,11 @@ export default function ElectricianGame() {
     return (
       <div className="min-h-screen bg-gray-900">
         {/* Header */}
-        <div className="bg-gray-800 text-white p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="bg-gray-800 text-white p-4 sticky top-0">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold">📱 Your Phone Notes App</h1>
-              <p className="text-gray-400 text-sm">Day {day} of 5 - Managing jobs manually</p>
+              <h1 className="text-lg font-bold">📱 Your Phone Notes</h1>
+              <p className="text-gray-400 text-sm">Day {day} of 5 • Chaos Mode</p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-green-400">${chaosRevenue.toLocaleString()}</p>
@@ -263,126 +321,90 @@ export default function ElectricianGame() {
           </div>
         )}
 
-        <div className="max-w-7xl mx-auto p-4">
-          {/* Search bar - manual feel */}
-          <div className="bg-gray-800 rounded-lg p-4 mb-4">
-            <div className="flex items-center gap-2 text-gray-400">
-              <span className="text-sm">🔍 Search your notes:</span>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Try finding 'Johnson' or 'emergency'..."
-                className="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500"
-              />
-            </div>
-            {searchTerm && (
-              <p className="text-xs text-yellow-400 mt-2">
-                Showing {visibleChaosJobs.length} of {chaosJobs.length} jobs
-              </p>
-            )}
-          </div>
-
-          {/* Lost Revenue Warning */}
+        <div className="max-w-4xl mx-auto p-4 pb-32">
+          {/* Lost Revenue */}
           {lostRevenue.length > 0 && (
-            <div className="bg-red-900 border border-red-700 rounded-lg p-4 mb-4">
-              <h3 className="font-bold text-red-200 mb-2">💸 Lost Revenue This Week</h3>
-              <ul className="text-sm text-red-300 space-y-1">
-                {lostRevenue.slice(-3).map((loss, i) => (
-                  <li key={i}>• {loss.reason}: -${loss.amount.toLocaleString()}</li>
-                ))}
-                <li className="font-bold text-red-100 pt-2">
-                  Total Lost: ${lostRevenue.reduce((sum, l) => sum + l.amount, 0).toLocaleString()}
-                </li>
-              </ul>
+            <div className="bg-red-900/50 border border-red-700 rounded-lg p-3 mb-4">
+              <p className="text-red-300 text-sm">
+                💸 Lost Revenue: ${lostRevenue.reduce((sum, l) => sum + l.amount, 0).toLocaleString()}
+              </p>
             </div>
           )}
 
-          {/* Jobs - scattered notes style */}
+          {/* Jobs List */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-gray-400 text-sm font-medium">
-                📝 Job Notes ({chaosJobs.length} active)
-              </h2>
-              <span className="text-gray-500 text-xs">Tap to select, then choose action</span>
-            </div>
+            <h2 className="text-gray-400 text-sm font-medium">
+              📝 Job Notes ({remainingChaosJobs.length} remaining)
+            </h2>
 
-            {chaosJobs.length === 0 ? (
+            {remainingChaosJobs.length === 0 ? (
               <div className="bg-gray-800 rounded-lg p-8 text-center text-gray-500">
-                No jobs in your notes. Click "Next Day" to continue.
+                <p className="mb-4">All jobs processed</p>
+                <button
+                  onClick={handleChaosEndDay}
+                  className="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
+                >
+                  End Day {day} →
+                </button>
               </div>
             ) : (
-              visibleChaosJobs.map((job) => (
-                <div
-                  key={job.id}
-                  onClick={() => setSelectedJob(selectedJob?.id === job.id ? null : job)}
-                  className={`bg-gray-800 rounded-lg p-4 cursor-pointer transition-all ${
-                    selectedJob?.id === job.id ? 'ring-2 ring-yellow-500' : ''
-                  } ${job.urgency === 'emergency' ? 'border-l-4 border-red-500' : ''}`}
+              remainingChaosJobs.map((job) => (
+                <div 
+                  key={job.id} 
+                  className={`bg-gray-800 rounded-lg p-4 ${
+                    job.urgency === 'emergency' ? 'border-l-4 border-red-500' : ''
+                  }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {job.urgency === 'emergency' && (
-                          <span className="px-2 py-0.5 bg-red-600 text-white text-xs rounded font-medium">
-                            ⚡ URGENT
-                          </span>
-                        )}
-                        <span className="text-white font-medium">{job.customer}</span>
-                        <span className="text-gray-500 text-xs">{job.daysOld > 0 ? `(${job.daysOld}d old)` : ''}</span>
-                      </div>
-                      <p className="text-gray-400 text-sm">{job.notes}</p>
-                      <p className="text-gray-500 text-xs mt-1">{JOB_TYPES[job.type].label} • ${job.value.toLocaleString()}</p>
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      {job.urgency === 'emergency' && (
+                        <span className="px-2 py-0.5 bg-red-600 text-white text-xs rounded font-medium mr-2">
+                          ⚡ URGENT
+                        </span>
+                      )}
+                      <span className="text-white font-medium">{JOB_TYPES[job.type].label}</span>
                     </div>
+                    <span className="text-green-400 font-bold">${job.value.toLocaleString()}</span>
+                  </div>
+                  <p className="text-gray-300 font-medium">{job.customer}</p>
+                  <p className="text-gray-500 text-sm">{job.phone} • {job.address}</p>
+                  <p className="text-gray-400 text-sm mt-1">{job.description}</p>
+                  
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      onClick={() => handleChaosComplete(job)}
+                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
+                    >
+                      Complete
+                    </button>
+                    <button
+                      onClick={() => handleChaosSkip(job)}
+                      className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600"
+                    >
+                      Skip
+                    </button>
                   </div>
                 </div>
               ))
             )}
           </div>
+        </div>
 
-          {/* Action Buttons */}
-          {selectedJob && (
-            <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
-              <div className="max-w-7xl mx-auto">
-                <div className="bg-gray-700 rounded-lg p-3 mb-3">
-                  <p className="text-white font-medium">{selectedJob.customer} - {JOB_TYPES[selectedJob.type].label}</p>
-                  <p className="text-gray-400 text-sm">{selectedJob.phone} • {selectedJob.address}</p>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleChaosComplete(selectedJob)}
-                    className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700"
-                  >
-                    ✓ Complete Job (${selectedJob.value.toLocaleString()})
-                  </button>
-                  <button
-                    onClick={() => handleChaosSkip(selectedJob.id)}
-                    className="px-4 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
-                  >
-                    Skip
-                  </button>
-                </div>
-              </div>
+        {/* Bottom Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="text-gray-400">
+              <span className="font-medium">Day {day}/5</span>
+              <span className="mx-2">•</span>
+              <span>{remainingChaosJobs.length} jobs remaining</span>
             </div>
-          )}
-
-          {/* Next Day Button */}
-          {!selectedJob && (
-            <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
-              <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <div className="text-gray-400">
-                  <p className="text-sm">Day {day}/5</p>
-                  <p className="text-xs">Chaos Mode</p>
-                </div>
-                <button
-                  onClick={handleChaosNextDay}
-                  className="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
-                >
-                  Next Day →
-                </button>
-              </div>
-            </div>
-          )}
+            <button
+              onClick={handleChaosEndDay}
+              className="px-6 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
+            >
+              End Day →
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -390,45 +412,45 @@ export default function ElectricianGame() {
 
   // Transition Phase
   if (phase === 'transition') {
-    const lost = lostRevenue.reduce((sum, l) => sum + l.amount, 0);
+    const chaosLost = lostRevenue.reduce((sum, l) => sum + l.amount, 0);
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">📊 5 Days of Chaos: Results</h1>
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg w-full text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">5 Days of Chaos</h1>
           
           <div className="bg-red-50 rounded-xl p-6 mb-6">
-            <p className="text-red-600 mb-2">Revenue Captured:</p>
+            <p className="text-red-600 text-sm mb-1">Total Revenue</p>
             <p className="text-4xl font-bold text-green-600">${chaosRevenue.toLocaleString()}</p>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-6 mb-6">
-            <p className="text-gray-600 mb-2">Revenue Lost to Chaos:</p>
-            <p className="text-4xl font-bold text-red-600">${lost.toLocaleString()}</p>
-            <ul className="text-left text-sm text-gray-600 mt-3 space-y-1">
+          <div className="bg-gray-100 rounded-xl p-6 mb-6">
+            <p className="text-gray-600 text-sm mb-1">Lost to Chaos</p>
+            <p className="text-4xl font-bold text-red-600">-${chaosLost.toLocaleString()}</p>
+            <div className="mt-3 text-left text-sm text-gray-600 max-h-32 overflow-y-auto">
               {lostRevenue.map((l, i) => (
-                <li key={i}>• {l.reason}</li>
+                <p key={i}>• {l.reason}: -${l.amount.toLocaleString()}</p>
               ))}
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 rounded-lg p-4 mb-6 text-left">
+            <p className="font-medium text-yellow-800 mb-2">What happened:</p>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Emergency calls got buried in notes</li>
+              <li>• Had to scroll/search to find details</li>
+              <li>• No reminders to follow up</li>
+              <li>• Lost customers to faster responders</li>
             </ul>
           </div>
 
-          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 text-left">
-            <h3 className="font-bold text-yellow-800 mb-2">💡 What went wrong:</h3>
-            <ul className="text-yellow-700 text-sm space-y-1">
-              <li>• Emergency calls mixed with routine jobs</li>
-              <li>• No automatic reminders for follow-ups</li>
-              <li>• Lost track of customer contact info</li>
-              <li>• Spending time searching instead of working</li>
-            </ul>
-          </div>
-
-          <p className="text-gray-600 mb-4">Now let's try the same 5 days with TradeSuite...</p>
-
+          <p className="text-gray-600 mb-4">Now let's try with TradeSuite...</p>
+          
           <button
             onClick={() => {
               setDay(1);
               setPhase('tradesuite');
             }}
-            className="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition-colors"
+            className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700"
           >
             Try TradeSuite →
           </button>
@@ -440,21 +462,19 @@ export default function ElectricianGame() {
   // TradeSuite Phase
   if (phase === 'tradesuite') {
     // Emergency jobs first
-    const sortedJobs = [...tradesuiteJobs].sort((a, b) => {
+    const sortedJobs = [...remainingTradesuiteJobs].sort((a, b) => {
       if (a.urgency === 'emergency' && b.urgency !== 'emergency') return -1;
       if (a.urgency !== 'emergency' && b.urgency === 'emergency') return 1;
       return 0;
     });
 
-    // Stats calculation
-    const emergencyCount = tradesuiteJobs.filter(j => j.urgency === 'emergency').length;
-    const totalValue = tradesuiteJobs.reduce((sum, j) => sum + j.value, 0);
+    const emergencyCount = remainingTradesuiteJobs.filter(j => j.urgency === 'emergency').length;
 
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* Header - Clean TradeSuite Style */}
+        {/* Header */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">⚡</span>
@@ -473,74 +493,77 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-              <p className="text-sm text-gray-500">Active Jobs</p>
-              <p className="text-2xl font-bold">{tradesuiteJobs.length}</p>
+        {/* Stats */}
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+              <p className="text-xs text-gray-500">Active Jobs</p>
+              <p className="text-xl font-bold">{remainingTradesuiteJobs.length}</p>
             </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-              <p className="text-sm text-gray-500">Emergency</p>
-              <p className={`text-2xl font-bold ${emergencyCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+            <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+              <p className="text-xs text-gray-500">Urgent</p>
+              <p className={`text-xl font-bold ${emergencyCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
                 {emergencyCount} {emergencyCount > 0 ? '⚡' : '✓'}
               </p>
             </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-              <p className="text-sm text-gray-500">Pipeline Value</p>
-              <p className="text-2xl font-bold">${totalValue.toLocaleString()}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-              <p className="text-sm text-gray-500">Day Progress</p>
-              <p className="text-2xl font-bold">{day}/5</p>
+            <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+              <p className="text-xs text-gray-500">Lost Revenue</p>
+              <p className="text-xl font-bold text-green-600">$0</p>
             </div>
           </div>
         </div>
 
         {/* Message */}
         {message && (
-          <div className="max-w-7xl mx-auto px-4 mb-4">
+          <div className="max-w-4xl mx-auto px-4 mb-4">
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
               {message}
             </div>
           </div>
         )}
 
-        {/* Jobs Board */}
-        <div className="max-w-7xl mx-auto px-4">
+        {/* Jobs */}
+        <div className="max-w-4xl mx-auto px-4 pb-32">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-4 border-b border-gray-200">
-              <h2 className="font-bold text-lg">📋 Job Board</h2>
-              <p className="text-sm text-gray-500">
-                {emergencyCount > 0 ? (
-                  <span className="text-red-600 font-medium">⚡ {emergencyCount} urgent job{emergencyCount > 1 ? 's' : ''} need{emergencyCount === 1 ? 's' : ''} immediate attention</span>
-                ) : (
-                  <span className="text-green-600">All caught up! No urgent jobs.</span>
-                )}
-              </p>
+              <h2 className="font-bold">Job Board</h2>
+              {emergencyCount > 0 ? (
+                <p className="text-red-600 text-sm font-medium">⚡ {emergencyCount} urgent job{emergencyCount > 1 ? 's' : ''} - complete first!</p>
+              ) : (
+                <p className="text-green-600 text-sm">All caught up!</p>
+              )}
             </div>
 
             <div className="divide-y divide-gray-200">
               {sortedJobs.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
-                  No active jobs. Click "Next Day" to continue.
+                  <p className="mb-4">All jobs completed for today!</p>
+                  <button
+                    onClick={handleTradesuiteEndDay}
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                  >
+                    End Day {day} →
+                  </button>
                 </div>
               ) : (
                 sortedJobs.map((job) => (
-                  <div key={job.id} className={`p-4 ${job.urgency === 'emergency' ? 'bg-red-50' : ''}`}>
-                    <div className="flex items-center justify-between">
-                      <div>
+                  <div 
+                    key={job.id} 
+                    className={`p-4 ${job.urgency === 'emergency' ? 'bg-red-50' : ''}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           {job.urgency === 'emergency' && (
                             <span className="px-2 py-0.5 bg-red-600 text-white text-xs rounded font-medium animate-pulse">
-                              ⚡ URGENT - Call Immediately
+                              ⚡ URGENT
                             </span>
                           )}
                           <span className="font-medium">{JOB_TYPES[job.type].label}</span>
                         </div>
-                        <p className="text-gray-900 font-medium">{job.customer}</p>
-                        <p className="text-gray-500 text-sm">{job.address}</p>
-                        <p className="text-gray-400 text-xs">{job.phone} • {job.notes}</p>
+                        <p className="font-medium text-gray-900">{job.customer}</p>
+                        <p className="text-gray-500 text-sm">{job.phone} • {job.address}</p>
+                        <p className="text-gray-400 text-sm">{job.description}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-xl font-bold text-green-600">${job.value.toLocaleString()}</p>
@@ -561,20 +584,16 @@ export default function ElectricianGame() {
 
         {/* Bottom Bar */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-          <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm">
-                ✓ Auto-sorted by urgency
-              </div>
-              <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
-                ✓ One-click invoicing
-              </div>
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <span className="bg-green-50 text-green-700 px-2 py-1 rounded">✓ Auto-sorted</span>
+              <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">✓ One-click invoice</span>
             </div>
             <button
-              onClick={handleTradesuiteNextDay}
+              onClick={handleTradesuiteEndDay}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
             >
-              Next Day →
+              End Day →
             </button>
           </div>
         </div>
@@ -585,90 +604,51 @@ export default function ElectricianGame() {
   // Results Phase
   if (phase === 'results') {
     const chaosLost = lostRevenue.reduce((sum, l) => sum + l.amount, 0);
-    const efficiency = Math.round(((tradesuiteRevenue - chaosRevenue + chaosLost) / Math.max(chaosRevenue, 1)) * 100);
+    const improvement = tradesuiteRevenue - chaosRevenue + chaosLost;
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-3xl w-full">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 text-center">📊 Final Results</h1>
-          <p className="text-gray-600 text-center mb-8">5 days of chaos vs 5 days with TradeSuite</p>
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">📊 Final Results</h1>
+          <p className="text-gray-600 text-center mb-8">Same 5 days, different systems</p>
 
-          <div className="grid grid-cols-2 gap-6 mb-8">
-            {/* Chaos Results */}
-            <div className="bg-gray-100 rounded-xl p-6">
-              <h3 className="font-bold text-gray-600 mb-4 text-center">Without TradeSuite</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Revenue Captured:</span>
-                  <span className="font-bold text-green-600">${chaosRevenue.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Revenue Lost:</span>
-                  <span className="font-bold text-red-600">-${chaosLost.toLocaleString()}</span>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Opportunities Missed:</span>
-                    <span className="font-bold text-red-600">{lostRevenue.length} jobs</span>
-                  </div>
-                </div>
-              </div>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-100 rounded-xl p-4">
+              <p className="text-gray-500 text-sm mb-1">Without TradeSuite</p>
+              <p className="text-2xl font-bold text-gray-900">${chaosRevenue.toLocaleString()}</p>
+              <p className="text-red-600 text-sm">-${chaosLost.toLocaleString()} lost</p>
             </div>
-
-            {/* TradeSuite Results */}
-            <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-500">
-              <h3 className="font-bold text-blue-800 mb-4 text-center">With TradeSuite</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Revenue Captured:</span>
-                  <span className="font-bold text-green-600">${tradesuiteRevenue.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Revenue Lost:</span>
-                  <span className="font-bold text-green-600">$0</span>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Opportunities Missed:</span>
-                    <span className="font-bold text-green-600">0 jobs</span>
-                  </div>
-                </div>
-              </div>
+            <div className="bg-green-50 rounded-xl p-4 border-2 border-green-500">
+              <p className="text-gray-500 text-sm mb-1">With TradeSuite</p>
+              <p className="text-2xl font-bold text-green-600">${tradesuiteRevenue.toLocaleString()}</p>
+              <p className="text-green-600 text-sm">$0 lost</p>
             </div>
           </div>
 
-          {/* Improvement */}
-          <div className="bg-green-50 rounded-xl p-6 mb-8 text-center">
-            <p className="text-gray-600 mb-2">TradeSuite Improvement:</p>
-            <p className="text-5xl font-bold text-green-600">
-              +${(tradesuiteRevenue - chaosRevenue + chaosLost).toLocaleString()}
-            </p>
-            <p className="text-gray-500 text-sm mt-2">
-              {efficiency > 0 ? `${efficiency}% more revenue captured` : 'Same revenue, less stress'}
-            </p>
+          <div className="bg-green-100 rounded-xl p-6 mb-6 text-center">
+            <p className="text-gray-600 mb-1">Additional Revenue with TradeSuite:</p>
+            <p className="text-5xl font-bold text-green-600">+${improvement.toLocaleString()}</p>
           </div>
 
-          {/* What TradeSuite Does */}
-          <div className="bg-gray-50 rounded-xl p-6 mb-8">
-            <h3 className="font-bold text-gray-900 mb-4">What TradeSuite Does:</h3>
-            <ul className="grid grid-cols-2 gap-2 text-sm">
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Emergency calls highlighted</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> All client info in one place</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> One-click estimates & invoices</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Automatic follow-up reminders</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Job scheduling calendar</li>
-              <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Revenue tracking dashboard</li>
+          <div className="bg-gray-50 rounded-xl p-4 mb-6">
+            <p className="font-medium text-gray-900 mb-2">TradeSuite gives you:</p>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>✓ Emergency calls highlighted at top</li>
+              <li>✓ All client info in one place</li>
+              <li>✓ One-click estimates and invoices</li>
+              <li>✓ Automatic follow-up reminders</li>
+              <li>✓ Revenue tracking dashboard</li>
             </ul>
           </div>
 
           <div className="text-center">
             <Link
               href="/signup?trade=electrician&source=game"
-              className="inline-block px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition-colors"
+              className="inline-block px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg hover:bg-blue-700"
             >
               Start Free Trial →
             </Link>
-            <p className="text-gray-500 text-sm mt-3">$29/month • No credit card required • Cancel anytime</p>
+            <p className="text-gray-500 text-sm mt-3">$29/month • 14-day free trial</p>
           </div>
         </div>
       </div>
