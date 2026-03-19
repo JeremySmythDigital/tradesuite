@@ -322,6 +322,17 @@ export default function ElectricianGame() {
         )}
 
         <div className="max-w-4xl mx-auto p-4 pb-32">
+          {/* Progress */}
+          <div className="bg-gray-800 rounded-lg p-3 mb-4 flex items-center justify-between">
+            <span className="text-gray-400">Jobs remaining: {remainingChaosJobs.length}/4</span>
+            <button
+              onClick={handleChaosEndDay}
+              className="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
+            >
+              End Day {day} →
+            </button>
+          </div>
+
           {/* Lost Revenue */}
           {lostRevenue.length > 0 && (
             <div className="bg-red-900/50 border border-red-700 rounded-lg p-3 mb-4">
@@ -338,11 +349,12 @@ export default function ElectricianGame() {
             </h2>
 
             {remainingChaosJobs.length === 0 ? (
-              <div className="bg-gray-800 rounded-lg p-8 text-center text-gray-500">
-                <p className="mb-4">All jobs processed</p>
+              <div className="bg-gray-800 rounded-lg p-8 text-center">
+                <p className="text-green-400 text-xl mb-2">✓ All jobs processed!</p>
+                <p className="text-gray-500 mb-4">Ready to end the day</p>
                 <button
                   onClick={handleChaosEndDay}
-                  className="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
+                  className="px-8 py-4 bg-yellow-600 text-white rounded-xl font-bold text-lg hover:bg-yellow-700"
                 >
                   End Day {day} →
                 </button>
@@ -390,20 +402,10 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="text-gray-400">
-              <span className="font-medium">Day {day}/5</span>
-              <span className="mx-2">•</span>
-              <span>{remainingChaosJobs.length} jobs remaining</span>
-            </div>
-            <button
-              onClick={handleChaosEndDay}
-              className="px-6 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700"
-            >
-              End Day →
-            </button>
+        {/* Simple footer */}
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3">
+          <div className="max-w-4xl mx-auto text-center text-gray-400 text-sm">
+            Day {day}/5 Chaos Mode • Complete or skip jobs, then end the day
           </div>
         </div>
       </div>
@@ -523,27 +525,31 @@ export default function ElectricianGame() {
         )}
 
         {/* Jobs */}
-        <div className="max-w-4xl mx-auto px-4 pb-32">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-4 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 pb-8">
+          {/* End Day Button - Always Visible */}
+          <div className="mb-4 flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div>
               <h2 className="font-bold">Job Board</h2>
               {emergencyCount > 0 ? (
                 <p className="text-red-600 text-sm font-medium">⚡ {emergencyCount} urgent job{emergencyCount > 1 ? 's' : ''} - complete first!</p>
               ) : (
-                <p className="text-green-600 text-sm">All caught up!</p>
+                <p className="text-green-600 text-sm">All caught up! Ready to end the day.</p>
               )}
             </div>
+            <button
+              onClick={handleTradesuiteEndDay}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+            >
+              End Day {day} →
+            </button>
+          </div>
 
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="divide-y divide-gray-200">
               {sortedJobs.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">
-                  <p className="mb-4">All jobs completed for today!</p>
-                  <button
-                    onClick={handleTradesuiteEndDay}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-                  >
-                    End Day {day} →
-                  </button>
+                <div className="p-8 text-center">
+                  <p className="text-green-600 text-xl mb-2">✓ Day Complete!</p>
+                  <p className="text-gray-500 mb-4">Great work! End the day to continue.</p>
                 </div>
               ) : (
                 sortedJobs.map((job) => (
@@ -582,19 +588,10 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <span className="bg-green-50 text-green-700 px-2 py-1 rounded">✓ Auto-sorted</span>
-              <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">✓ One-click invoice</span>
-            </div>
-            <button
-              onClick={handleTradesuiteEndDay}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
-            >
-              End Day →
-            </button>
+        {/* Simple footer */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3">
+          <div className="max-w-4xl mx-auto text-center text-sm text-gray-500">
+            TradeSuite Mode • Day {day}/5
           </div>
         </div>
       </div>
