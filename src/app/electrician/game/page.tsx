@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-// Types
 interface Job {
   id: string;
   type: 'service_call' | 'panel_upgrade' | 'inspection' | 'remodel';
@@ -71,6 +70,12 @@ function generateDayJobs(count: number): Job[] {
   return Array.from({ length: count }, generateJob);
 }
 
+function addJobId(prev: Set<string>, id: string): Set<string> {
+  const next = new Set<string>(prev);
+  next.add(id);
+  return next;
+}
+
 export default function ElectricianGame() {
   const [phase, setPhase] = useState<GamePhase>('intro');
   const [day, setDay] = useState(1);
@@ -84,7 +89,6 @@ export default function ElectricianGame() {
   const [showDaySummary, setShowDaySummary] = useState(false);
   const [dayResults, setDayResults] = useState<{ completed: number; revenue: number; lost: number } | null>(null);
 
-  // Initialize jobs for each phase
   useEffect(() => {
     if (phase === 'chaos' && chaosJobs.length === 0) {
       setChaosJobs(generateDayJobs(4));
@@ -96,45 +100,38 @@ export default function ElectricianGame() {
     }
   }, [phase]);
 
-  // Count remaining jobs
   const remainingChaosJobs = chaosJobs.filter(j => !completedJobs.has(j.id));
   const remainingTradesuiteJobs = tradesuiteJobs.filter(j => !completedJobs.has(j.id));
 
-  // Chaos: Complete a job
   const handleChaosComplete = (job: Job) => {
-    if (completedJobs.has(job.id)) return; // Prevent double completion
+    if (completedJobs.has(job.id)) return;
     
-    setCompletedJobs(prev => new Set([...prev, job.id]));
+    setCompletedJobs(prev => addJobId(prev, job.id));
     setChaosRevenue(prev => prev + job.value);
     setMessage(`✓ Completed ${JOB_TYPES[job.type].label} for $${job.value.toLocaleString()}`);
   };
 
-  // Chaos: Skip a job (lose customer)
   const handleChaosSkip = (job: Job) => {
     if (completedJobs.has(job.id)) return;
     
-    setCompletedJobs(prev => new Set([...prev, job.id]));
+    setCompletedJobs(prev => addJobId(prev, job.id));
     const lost = Math.round(job.value * 0.3);
     setLostRevenue(prev => [...prev, { reason: `Skipped ${job.customer}`, amount: lost }]);
     setMessage(`⚠ Lost ${job.customer} - they called someone else`);
   };
 
-  // Chaos: End day
   const handleChaosEndDay = () => {
-    // Calculate losses for unfinished jobs
     const unfinished = remainingChaosJobs;
     let dayLost = 0;
     
     unfinished.forEach(job => {
       if (job.urgency === 'emergency') {
-        // Emergency jobs = total loss
         setLostRevenue(prev => [...prev, { 
           reason: `Missed emergency: ${job.customer}`, 
           amount: job.value 
         }]);
         dayLost += job.value;
       } else {
-        // Regular jobs = 30% chance customer calls competitor
         if (Math.random() > 0.7) {
           setLostRevenue(prev => [...prev, { 
             reason: `${job.customer} went elsewhere`, 
@@ -153,7 +150,6 @@ export default function ElectricianGame() {
     setShowDaySummary(true);
   };
 
-  // Chaos: Next day after summary
   const handleChaosNextDay = () => {
     setShowDaySummary(false);
     setMessage('');
@@ -168,28 +164,25 @@ export default function ElectricianGame() {
     setCompletedJobs(new Set());
   };
 
-  // TradeSuite: Complete a job
   const handleTradesuiteComplete = (job: Job) => {
     if (completedJobs.has(job.id)) return;
     
-    setCompletedJobs(prev => new Set([...prev, job.id]));
+    setCompletedJobs(prev => addJobId(prev, job.id));
     setTradesuiteRevenue(prev => prev + job.value);
     
     const bonus = job.urgency === 'emergency' ? ' (⚡ Emergency bonus included!)' : '';
     setMessage(`✓ Completed ${JOB_TYPES[job.type].label} for ${job.customer} - $${job.value.toLocaleString()}${bonus}`);
   };
 
-  // TradeSuite: End day
   const handleTradesuiteEndDay = () => {
     setDayResults({
       completed: 4 - remainingTradesuiteJobs.length,
       revenue: tradesuiteRevenue,
-      lost: 0, // No losses in TradeSuite
+      lost: 0,
     });
     setShowDaySummary(true);
   };
 
-  // TradeSuite: Next day
   const handleTradesuiteNextDay = () => {
     setShowDaySummary(false);
     setMessage('');
@@ -209,17 +202,17 @@ export default function ElectricianGame() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">⚡ The Electrician's Dilemma</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">⚡ The Electrician&apos;s Dilemma</h1>
           <p className="text-gray-600 mb-6">A 5-day simulation comparing spreadsheet chaos vs TradeSuite</p>
           
           <div className="bg-gray-100 rounded-xl p-4 mb-6">
             <h3 className="font-bold mb-2">📋 How This Works:</h3>
             <ul className="text-sm text-gray-700 space-y-2">
-              <li><strong>Day 1: Chaos Mode</strong> - Manage jobs manually. See what gets lost.</li>
               <li><strong>Receive 4 jobs per day</strong> - Choose which to complete or skip</li>
               <li><strong>Emergency jobs</strong> - Must complete same day or lose customer</li>
-              <li><strong>Day 6: TradeSuite</strong> - Same scenario, organized dashboard</li>
-              <li><strong>Compare results</strong> - See how much you lost to chaos</li>
+              <li><strong>Day 1-5: Chaos Mode</strong> - Manage jobs manually</li>
+              <li><strong>Day 6-10: TradeSuite</strong> - Same scenario, organized</li>
+              <li><strong>Compare results</strong> - See the difference</li>
             </ul>
           </div>
 
@@ -233,7 +226,7 @@ export default function ElectricianGame() {
               </ul>
             </div>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h4 className="font-bold text-green-800 mb-1">TradeSuite Mode</h4>
+              <h4 className="font-bold text-green-800 mb-1">TradeSuite</h4>
               <ul className="text-xs text-green-700 space-y-1">
                 <li>• Urgent jobs highlighted</li>
                 <li>• All info visible</li>
@@ -260,7 +253,7 @@ export default function ElectricianGame() {
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            {isChaos ? 'Day ' + day + ' Complete (Chaos Mode)' : 'Day ' + day + ' Complete'}
+            {isChaos ? `Day ${day} Complete (Chaos Mode)` : `Day ${day} Complete`}
           </h2>
           
           <div className="space-y-4 mb-6">
@@ -289,7 +282,7 @@ export default function ElectricianGame() {
             onClick={isChaos ? handleChaosNextDay : handleTradesuiteNextDay}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors"
           >
-            {day >= 5 ? 'See Final Results →' : 'Start Day ' + (day + 1) + ' →'}
+            {day >= 5 ? 'See Final Results →' : `Start Day ${day + 1} →`}
           </button>
         </div>
       </div>
@@ -300,7 +293,6 @@ export default function ElectricianGame() {
   if (phase === 'chaos') {
     return (
       <div className="min-h-screen bg-gray-900">
-        {/* Header */}
         <div className="bg-gray-800 text-white p-4 sticky top-0">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <div>
@@ -314,15 +306,13 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
           <div className="bg-blue-900 border-b border-blue-700 p-3 text-center text-blue-200 text-sm">
             {message}
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto p-4 pb-32">
-          {/* Progress */}
+        <div className="max-w-4xl mx-auto p-4 pb-8">
           <div className="bg-gray-800 rounded-lg p-3 mb-4 flex items-center justify-between">
             <span className="text-gray-400">Jobs remaining: {remainingChaosJobs.length}/4</span>
             <button
@@ -333,7 +323,6 @@ export default function ElectricianGame() {
             </button>
           </div>
 
-          {/* Lost Revenue */}
           {lostRevenue.length > 0 && (
             <div className="bg-red-900/50 border border-red-700 rounded-lg p-3 mb-4">
               <p className="text-red-300 text-sm">
@@ -342,7 +331,6 @@ export default function ElectricianGame() {
             </div>
           )}
 
-          {/* Jobs List */}
           <div className="space-y-3">
             <h2 className="text-gray-400 text-sm font-medium">
               📝 Job Notes ({remainingChaosJobs.length} remaining)
@@ -402,7 +390,6 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Simple footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3">
           <div className="max-w-4xl mx-auto text-center text-gray-400 text-sm">
             Day {day}/5 Chaos Mode • Complete or skip jobs, then end the day
@@ -445,7 +432,7 @@ export default function ElectricianGame() {
             </ul>
           </div>
 
-          <p className="text-gray-600 mb-4">Now let's try with TradeSuite...</p>
+          <p className="text-gray-600 mb-4">Now let&apos;s try with TradeSuite...</p>
           
           <button
             onClick={() => {
@@ -463,7 +450,6 @@ export default function ElectricianGame() {
 
   // TradeSuite Phase
   if (phase === 'tradesuite') {
-    // Emergency jobs first
     const sortedJobs = [...remainingTradesuiteJobs].sort((a, b) => {
       if (a.urgency === 'emergency' && b.urgency !== 'emergency') return -1;
       if (a.urgency !== 'emergency' && b.urgency === 'emergency') return 1;
@@ -474,7 +460,6 @@ export default function ElectricianGame() {
 
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
         <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
           <div className="max-w-4xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
@@ -495,7 +480,6 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
@@ -515,7 +499,6 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
           <div className="max-w-4xl mx-auto px-4 mb-4">
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
@@ -524,9 +507,7 @@ export default function ElectricianGame() {
           </div>
         )}
 
-        {/* Jobs */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
-          {/* End Day Button - Always Visible */}
           <div className="mb-4 flex items-center justify-between bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div>
               <h2 className="font-bold">Job Board</h2>
@@ -588,7 +569,6 @@ export default function ElectricianGame() {
           </div>
         </div>
 
-        {/* Simple footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3">
           <div className="max-w-4xl mx-auto text-center text-sm text-gray-500">
             TradeSuite Mode • Day {day}/5
@@ -624,7 +604,7 @@ export default function ElectricianGame() {
 
           <div className="bg-green-100 rounded-xl p-6 mb-6 text-center">
             <p className="text-gray-600 mb-1">Additional Revenue with TradeSuite:</p>
-            <p className="text-5xl font-bold text-green-600">+${improvement.toLocaleString()}</p>
+            <p className="text-5xl font-bold text-green-600">+${improvement > 0 ? improvement.toLocaleString() : '0'}</p>
           </div>
 
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
