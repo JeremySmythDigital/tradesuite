@@ -58,4 +58,4 @@ export async function POST(request: NextRequest) {
     console.error('Checkout error:', error);
     return NextResponse.json({ success: false, error: 'Failed to create checkout session' }, { status: 500 });
   }
-}
+}// redeploy Thu Mar 19 22:00:41 CDT 2026
