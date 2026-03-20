@@ -3,6 +3,7 @@ import './globals.css';
 import { ABTestProvider } from '@/components/auth/ABTestProvider';
 import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import { baseMetadata, viewport as baseViewport } from '@/lib/metadata';
+import { getOrganizationSchema, getSoftwareSchema, getFAQSchema, schemaToScript } from '@/lib/structured-data';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -35,6 +36,22 @@ export default function RootLayout({
         <meta name="theme-color" content="#2563eb" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemaToScript(getOrganizationSchema()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemaToScript(getSoftwareSchema()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: schemaToScript(getFAQSchema()) }}
+        />
+        
+        {/* Service Worker Registration */}
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
