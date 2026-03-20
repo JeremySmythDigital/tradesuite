@@ -81,13 +81,13 @@ export default function LandscaperPage() {
             <div className="lg:w-1/2">
               <FadeIn>
                 <h1 className="text-4xl md:text-5xl font-bold mb-6 font-display">
-                  The CRM Built for <span className="text-yellow-300">Landscapers</span>
+                  The CRM Built for <span className="text-green-200">Landscapers</span>
                 </h1>
               </FadeIn>
               <FadeIn delay={0.1}>
                 <p className="text-xl text-green-100 mb-8">
-                  Maintenance contracts. Design installs. Seasonal services. Snow removal.
-                  <br />Every property organized, every crew on schedule.
+                  Maintenance routes. Design projects. Seasonal services. Snow removal.
+                  <br />Every job tracked. Every customer happy.
                 </p>
               </FadeIn>
               <FadeIn delay={0.2}>
@@ -106,7 +106,7 @@ export default function LandscaperPage() {
               {stats.map((stat, index) => (
                 <FadeIn key={stat.label} delay={0.3 + index * 0.1}>
                   <div className="bg-white/10 backdrop-blur rounded-xl p-6 text-center hover:bg-white/20 transition-all">
-                    <p className="text-3xl font-bold text-yellow-300">{stat.value}</p>
+                    <p className="text-3xl font-bold text-green-200">{stat.value}</p>
                     <p className="text-green-100">{stat.label}</p>
                   </div>
                 </FadeIn>
@@ -122,12 +122,13 @@ export default function LandscaperPage() {
           <div className="text-center mb-12">
             <FadeIn>
               <h2 className="text-3xl font-bold text-gray-900 mb-4 font-display">
-                Stop Losing Jobs to Chaos
+                Stop Letting Jobs Fall Through the Cracks
               </h2>
             </FadeIn>
             <FadeIn delay={0.1}>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Every landscaper loses money to disorganization. Crews go to wrong properties. Contracts slip through cracks.
+                Every landscaper loses money to disorganization. Routes get missed.
+                Follow-ups get forgotten. Contract renewals slip away.
               </p>
             </FadeIn>
           </div>
@@ -137,11 +138,11 @@ export default function LandscaperPage() {
               <div className="bg-red-50 rounded-xl p-6 border border-red-200">
                 <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without TradeSuite</h3>
                 <ul className="space-y-2 text-red-700">
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Crews show up at wrong properties</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Client info scattered across apps</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget contract renewals</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Can&apos;t track which jobs are profitable</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>No equipment tracking for trucks</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Routes scribbled on paper</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Customer info scattered across apps</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget to invoice completed jobs</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Missed contract renewals</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>No idea which properties are profitable</li>
                 </ul>
               </div>
             </FadeIn>
@@ -150,11 +151,11 @@ export default function LandscaperPage() {
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
                 <h3 className="font-bold text-green-800 text-lg mb-4">✓ With TradeSuite</h3>
                 <ul className="space-y-2 text-green-700">
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>GPS-tracked crew routes</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All client info in one dashboard</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Auto contract renewal reminders</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Profitability per property</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Equipment tracking built in</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Optimized routes with GPS tracking</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All customer info in one dashboard</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>One-click invoices after each job</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Automatic contract renewal reminders</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Property profit tracking at a glance</li>
                 </ul>
               </div>
             </FadeIn>
@@ -201,22 +202,24 @@ export default function LandscaperPage() {
         </div>
       </section>
 
+      {/* Trust Badges Section */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeIn>
-              <h2 className="font-bold text-4xl mb-4 font-display">What Landscapers Say</h2>
+              <h2 className="font-bold text-4xl mb-4 font-display">Built for Landscaping Professionals</h2>
             </FadeIn>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((item, index) => (
-              <TestimonialCard key={item.name} {...item} delay={index * 0.1} />
-            ))}
+            <FadeIn delay={0.1}>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Everything you need to run your landscaping business. No custom fields. No workarounds.
+              </p>
+            </FadeIn>
           </div>
           <TrustBadges />
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-green-600 to-emerald-600 relative overflow-hidden">
         <BlurBlob color="white" className="top-0 right-0 opacity-10" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
@@ -224,7 +227,9 @@ export default function LandscaperPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Grow Your Landscaping Business?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-green-100 text-xl mb-8">Learn how TradeSuite can help your landscaping business who stay organized year-round.</p>
+            <p className="text-green-100 text-xl mb-8">
+              Join thousands of landscapers who trust TradeSuite to manage their business.
+            </p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=landscaper" className="inline-block px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-green-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

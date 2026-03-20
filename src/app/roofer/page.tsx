@@ -48,7 +48,7 @@ export default function RooferPage() {
                 Play Simulator
               </Link>
               <Link href="/login" className="text-gray-600 hover:text-gray-900">Sign In</Link>
-              <Link href="/signup?trade=roofer" className="px-4 py-2 bg-yellow-500 text-slate-900 rounded-lg hover:bg-yellow-400 transition-colors font-medium">
+              <Link href="/signup?trade=roofer" className="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors font-medium">
                 Start Free Trial
               </Link>
             </div>
@@ -75,19 +75,19 @@ export default function RooferPage() {
       </section>
 
       <section className="bg-gradient-to-br from-slate-700 to-slate-900 text-white py-20 relative overflow-hidden">
-        <BlurBlob color="yellow" className="top-0 right-0 opacity-20" />
+        <BlurBlob color="yellow" className="top-0 right-0 opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
               <FadeIn>
                 <h1 className="text-4xl md:text-5xl font-bold mb-6 font-display">
-                  The CRM Built for <span className="text-yellow-400">Roofers</span>
+                  The CRM Built for <span className="text-yellow-400">Roofing Contractors</span>
                 </h1>
               </FadeIn>
               <FadeIn delay={0.1}>
                 <p className="text-xl text-slate-300 mb-8">
-                  Inspections. Replacements. Repairs. Insurance claims.
-                  <br />From first call to final warranty, all in one place.
+                  Inspections. Estimates. Insurance claims. Installations.
+                  <br />Every job tracked. Every customer happy.
                 </p>
               </FadeIn>
               <FadeIn delay={0.2}>
@@ -127,7 +127,8 @@ export default function RooferPage() {
             </FadeIn>
             <FadeIn delay={0.1}>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Every roofer loses money to disorganization. Insurance claims take forever. Estimates get delayed.
+                Every roofer loses time to disorganization. Estimates get lost.
+                Follow-ups get forgotten. Insurance claims drag on forever.
               </p>
             </FadeIn>
           </div>
@@ -137,11 +138,11 @@ export default function RooferPage() {
               <div className="bg-red-50 rounded-xl p-6 border border-red-200">
                 <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without TradeSuite</h3>
                 <ul className="space-y-2 text-red-700">
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Insurance claims eat your weekends</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Estimates scribbled on paper</li>
                   <li className="flex items-start gap-2"><span className="text-red-500">•</span>Photos scattered across phones</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget warranty expirations</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Can&apos;t quote jobs on the spot</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>No idea which jobs are profitable</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Insurance claims with missing info</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget to follow up on quotes</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Warranty tracking a nightmare</li>
                 </ul>
               </div>
             </FadeIn>
@@ -150,11 +151,11 @@ export default function RooferPage() {
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
                 <h3 className="font-bold text-green-800 text-lg mb-4">✓ With TradeSuite</h3>
                 <ul className="space-y-2 text-green-700">
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Insurance reports in 5 minutes</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Photos organized by property</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Auto warranty reminders</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Professional quotes in 60 seconds</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Revenue tracking at a glance</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Professional estimates in 60 seconds</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All photos organized by job</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Insurance-ready reports auto-generated</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Automatic follow-up reminders</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Warranty expiration alerts</li>
                 </ul>
               </div>
             </FadeIn>
@@ -201,22 +202,24 @@ export default function RooferPage() {
         </div>
       </section>
 
+      {/* Trust Badges Section */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeIn>
-              <h2 className="font-bold text-4xl mb-4 font-display">What Roofers Say</h2>
+              <h2 className="font-bold text-4xl mb-4 font-display">Built for Roofing Professionals</h2>
             </FadeIn>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((item, index) => (
-              <TestimonialCard key={item.name} {...item} delay={index * 0.1} />
-            ))}
+            <FadeIn delay={0.1}>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Everything you need to run your roofing business. No custom fields. No workarounds.
+              </p>
+            </FadeIn>
           </div>
           <TrustBadges />
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-slate-700 to-slate-900 relative overflow-hidden">
         <BlurBlob color="yellow" className="top-0 right-0 opacity-10" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
@@ -224,7 +227,9 @@ export default function RooferPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stop Climbing Ladders for Paperwork?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-slate-300 text-xl mb-8">Learn how TradeSuite can help your roofing business who close more deals with better estimates.</p>
+            <p className="text-slate-300 text-xl mb-8">
+              Join thousands of roofers who trust TradeSuite to close more deals with better estimates.
+            </p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=roofer" className="inline-block px-8 py-4 bg-yellow-500 text-slate-900 rounded-xl hover:bg-yellow-400 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

@@ -74,20 +74,20 @@ export default function HVACPage() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-orange-500 to-red-600 text-white py-20 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-orange-600 to-red-600 text-white py-20 relative overflow-hidden">
         <BlurBlob color="white" className="top-0 right-0 opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
               <FadeIn>
                 <h1 className="text-4xl md:text-5xl font-bold mb-6 font-display">
-                  The CRM Built for <span className="text-yellow-300">HVAC Pros</span>
+                  The CRM Built for <span className="text-orange-200">HVAC Contractors</span>
                 </h1>
               </FadeIn>
               <FadeIn delay={0.1}>
                 <p className="text-xl text-orange-100 mb-8">
-                  Installation quotes. Service calls. Maintenance contracts. Seasonal prep.
-                  <br />Everything you need to stay cool (or warm) all year.
+                  Emergency repairs. Seasonal tune-ups. Installations. Maintenance plans.
+                  <br />Every job tracked. Every customer happy.
                 </p>
               </FadeIn>
               <FadeIn delay={0.2}>
@@ -106,7 +106,7 @@ export default function HVACPage() {
               {stats.map((stat, index) => (
                 <FadeIn key={stat.label} delay={0.3 + index * 0.1}>
                   <div className="bg-white/10 backdrop-blur rounded-xl p-6 text-center hover:bg-white/20 transition-all">
-                    <p className="text-3xl font-bold text-yellow-300">{stat.value}</p>
+                    <p className="text-3xl font-bold text-orange-200">{stat.value}</p>
                     <p className="text-orange-100">{stat.label}</p>
                   </div>
                 </FadeIn>
@@ -122,12 +122,13 @@ export default function HVACPage() {
           <div className="text-center mb-12">
             <FadeIn>
               <h2 className="text-3xl font-bold text-gray-900 mb-4 font-display">
-                Stop Losing Jobs to Chaos
+                Stop Losing Jobs to Disorganization
               </h2>
             </FadeIn>
             <FadeIn delay={0.1}>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Every HVAC contractor loses money to disorganization. Maintenance contracts slip through the cracks. Follow-ups get forgotten.
+                Every HVAC contractor loses money to scheduling chaos. Emergency calls get missed.
+                Follow-ups get forgotten. Maintenance contracts slip through the cracks.
               </p>
             </FadeIn>
           </div>
@@ -137,11 +138,11 @@ export default function HVACPage() {
               <div className="bg-red-50 rounded-xl p-6 border border-red-200">
                 <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without TradeSuite</h3>
                 <ul className="space-y-2 text-red-700">
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Maintenance contracts fall through cracks</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Customer info scattered across apps</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget seasonal prep reminders</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Can&apos;t track warranty expiration</li>
-                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>No idea which jobs are profitable</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Emergency calls lost in text threads</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Missed maintenance contract renewals</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Forget to invoice completed jobs</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>No visibility into seasonal workload</li>
+                  <li className="flex items-start gap-2"><span className="text-red-500">•</span>Warranty tracking a nightmare</li>
                 </ul>
               </div>
             </FadeIn>
@@ -150,11 +151,11 @@ export default function HVACPage() {
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
                 <h3 className="font-bold text-green-800 text-lg mb-4">✓ With TradeSuite</h3>
                 <ul className="space-y-2 text-green-700">
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Auto reminders for maintenance contracts</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All customer info in one dashboard</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Seasonal prep alerts automated</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Warranty tracking built in</li>
-                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Revenue tracking at a glance</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Emergency calls highlighted instantly</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Automatic maintenance reminders</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>One-click invoices after each job</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Seasonal workload forecasting</li>
+                  <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Warranty expiration alerts</li>
                 </ul>
               </div>
             </FadeIn>
@@ -201,22 +202,24 @@ export default function HVACPage() {
         </div>
       </section>
 
+      {/* Trust Badges Section */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeIn>
-              <h2 className="font-bold text-4xl mb-4 font-display">What HVAC Contractors Say</h2>
+              <h2 className="font-bold text-4xl mb-4 font-display">Built for HVAC Professionals</h2>
             </FadeIn>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((item, index) => (
-              <TestimonialCard key={item.name} {...item} delay={index * 0.1} />
-            ))}
+            <FadeIn delay={0.1}>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Everything you need to run your HVAC business. No custom fields. No workarounds.
+              </p>
+            </FadeIn>
           </div>
           <TrustBadges />
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-orange-500 to-red-600 relative overflow-hidden">
         <BlurBlob color="white" className="top-0 right-0 opacity-10" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
@@ -224,7 +227,9 @@ export default function HVACPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stay Cool Under Pressure?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-orange-100 text-xl mb-8">Learn how TradeSuite can help your HVAC business who stay organized year-round.</p>
+            <p className="text-orange-100 text-xl mb-8">
+              Join thousands of HVAC contractors who trust TradeSuite to manage their business.
+            </p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=hvac" className="inline-block px-8 py-4 bg-white text-orange-700 rounded-xl hover:bg-orange-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

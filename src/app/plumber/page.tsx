@@ -202,10 +202,7 @@ export default function PlumberPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <FadeIn>
+      {/* Trust Badges Section */}
       <section className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -222,6 +219,7 @@ export default function PlumberPage() {
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-blue-600 to-cyan-600 relative overflow-hidden">
         <BlurBlob color="white" className="top-0 right-0 opacity-10" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
@@ -229,7 +227,9 @@ export default function PlumberPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stop Leaking Revenue?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-blue-100 text-xl mb-8">Learn how TradeSuite can help your plumbing business with TradeSuite.</p>
+            <p className="text-blue-100 text-xl mb-8">
+              Join thousands of plumbers who trust TradeSuite to manage their business.
+            </p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=plumber" className="inline-block px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">
