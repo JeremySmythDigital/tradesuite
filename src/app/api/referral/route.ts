@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { referralPostSchema, validateForm } from '@/lib/validation';
+import { referralLimiter, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus-production-1dd5.up.railway.app';
+const DIRECTUS_ADMIN_TOKEN = process.env.DIRECTUS_ADMIN_TOKEN || process.env.DIRECTUS_TOKEN;
 
-// Generate a unique referral code
 function generateReferralCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
@@ -12,24 +14,70 @@ function generateReferralCode(): string {
   return code;
 }
 
+// Check for code collision
+async function isCodeUnique(code: string): Promise<boolean> {
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (DIRECTUS_ADMIN_TOKEN) {
+      headers['Authorization'] = `Bearer ${DIRECTUS_ADMIN_TOKEN}`;
+    }
+    
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/referrals?filter[code][_eq]=${code}&limit=1`,
+      { headers }
+    );
+    const data = await response.json();
+    return !data.data || data.data.length === 0;
+  } catch {
+    return true; // Assume unique if we can't check
+  }
+}
+
+async function generateUniqueCode(): Promise<string> {
+  let code = generateReferralCode();
+  let attempts = 0;
+  
+  while (!(await isCodeUnique(code)) && attempts < 5) {
+    code = generateReferralCode();
+    attempts++;
+  }
+  
+  return code;
+}
+
 // GET /api/referral - Get user's referral code and stats
 export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get('email');
   
   if (!email) {
-    return NextResponse.json({ success: false, error: 'Email required' }, { status: 400 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Email required' 
+    }, { status: 400 });
   }
+
+  // Rate limiting
+  const ip = getClientIp(request);
+  const { success: rateOk, remaining, reset } = await referralLimiter.limit(ip);
   
+  if (!rateOk) {
+    return rateLimitResponse(remaining, reset);
+  }
+
   try {
-    // Check if user has referral code
-    const response = await fetch(`${DIRECTUS_URL}/items/referrals?filter[email][_eq]=${encodeURIComponent(email)}`, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (DIRECTUS_ADMIN_TOKEN) {
+      headers['Authorization'] = `Bearer ${DIRECTUS_ADMIN_TOKEN}`;
+    }
+    
+    const response = await fetch(
+      `${DIRECTUS_URL}/items/referrals?filter[email][_eq]=${encodeURIComponent(email)}`,
+      { headers }
+    );
     
     const data = await response.json();
     
     if (data.data && data.data.length > 0) {
-      // Existing referral code
       const referral = data.data[0];
       return NextResponse.json({ 
         success: true, 
@@ -38,11 +86,17 @@ export async function GET(request: NextRequest) {
         credits: referral.credits || 0 
       });
     } else {
-      // Generate new referral code
-      const newCode = generateReferralCode();
+      // Generate new unique code
+      const newCode = await generateUniqueCode();
+      
+      const createHeaders: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (DIRECTUS_ADMIN_TOKEN) {
+        createHeaders['Authorization'] = `Bearer ${DIRECTUS_ADMIN_TOKEN}`;
+      }
+      
       const createResponse = await fetch(`${DIRECTUS_URL}/items/referrals`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: createHeaders,
         body: JSON.stringify({
           email,
           code: newCode,
@@ -52,7 +106,6 @@ export async function GET(request: NextRequest) {
       });
       
       if (!createResponse.ok) {
-        // If collection doesn't exist, return mock for now
         return NextResponse.json({ 
           success: true, 
           code: newCode,
@@ -61,7 +114,6 @@ export async function GET(request: NextRequest) {
         });
       }
       
-      const created = await createResponse.json();
       return NextResponse.json({ 
         success: true, 
         code: newCode,
@@ -71,10 +123,9 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('Referral lookup error:', error);
-    // Return generated code even if Directus fails
     return NextResponse.json({ 
       success: true, 
-      code: generateReferralCode(),
+      code: await generateUniqueCode(),
       referrals: 0,
       credits: 0 
     });
@@ -83,31 +134,49 @@ export async function GET(request: NextRequest) {
 
 // POST /api/referral - Track a referral sign-up
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const { referrerCode, newEmail } = body;
+  // Rate limiting
+  const ip = getClientIp(request);
+  const { success: rateOk, remaining, reset } = await referralLimiter.limit(ip);
   
-  if (!referrerCode || !newEmail) {
-    return NextResponse.json({ success: false, error: 'Referrer code and new email required' }, { status: 400 });
+  if (!rateOk) {
+    return rateLimitResponse(remaining, reset);
   }
-  
+
   try {
-    // Find referrer
-    const referrerResponse = await fetch(`${DIRECTUS_URL}/items/referrals?filter[code][_eq]=${referrerCode}`, {
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const body = await request.json();
+    
+    // Validate input
+    const validation = validateForm(referralPostSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        success: false, 
+        error: validation.error 
+      }, { status: 400 });
+    }
+
+    const { referrerCode, newEmail } = validation.data;
+    
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (DIRECTUS_ADMIN_TOKEN) {
+      headers['Authorization'] = `Bearer ${DIRECTUS_ADMIN_TOKEN}`;
+    }
+    
+    const referrerResponse = await fetch(
+      `${DIRECTUS_URL}/items/referrals?filter[code][_eq]=${referrerCode}`,
+      { headers }
+    );
     
     const referrerData = await referrerResponse.json();
     
     if (referrerData.data && referrerData.data.length > 0) {
       const referrer = referrerData.data[0];
       
-      // Increment referrer's count
       await fetch(`${DIRECTUS_URL}/items/referrals/${referrer.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           referrals: (referrer.referrals || 0) + 1,
-          credits: (referrer.credits || 0) + 10, // $10 credit per referral
+          credits: (referrer.credits || 0) + 10,
         }),
       });
       
@@ -125,7 +194,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Referral tracking error:', error);
     return NextResponse.json({ 
-      success: true, // Return success even if tracking fails
+      success: true,
       message: 'Referral noted (tracking pending)',
       creditsEarned: 0 
     });

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { checkoutSchema, validateForm } from '@/lib/validation';
+import { checkoutLimiter, getClientIp, rateLimitResponse } from '@/lib/rate-limit';
 
 // TradeSuite Price IDs (TEST MODE - created 2026-03-19)
 const PRICES: Record<string, string> = {
@@ -15,19 +17,47 @@ function getStripe(): Stripe {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limiting
+  const ip = getClientIp(request);
+  const { success: rateOk, remaining, reset } = await checkoutLimiter.limit(ip);
+  
+  if (!rateOk) {
+    return rateLimitResponse(remaining, reset);
+  }
+
   const stripe = getStripe();
 
   try {
     const body = await request.json();
-    const { plan, email, userId, referrer } = body;
-
-    if (!plan || !['solo', 'team', 'business'].includes(plan)) {
-      return NextResponse.json({ success: false, error: 'Invalid plan selected' }, { status: 400 });
+    
+    // Validate input with Zod
+    const validation = validateForm(checkoutSchema, body);
+    if (!validation.success) {
+      return NextResponse.json({ 
+        success: false, 
+        error: validation.error 
+      }, { status: 400 });
     }
 
+    const { plan, email, userId, referrer } = validation.data;
     const priceId = PRICES[plan];
+
     if (!priceId) {
-      return NextResponse.json({ success: false, error: 'Plan price not found' }, { status: 400 });
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Plan price not found' 
+      }, { status: 400 });
+    }
+
+    // Check for existing customer to avoid duplicates
+    const existingCustomers = await stripe.customers.list({
+      email,
+      limit: 1,
+    });
+
+    let customerId: string | undefined;
+    if (existingCustomers.data.length > 0) {
+      customerId = existingCustomers.data[0].id;
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -36,27 +66,34 @@ export async function POST(request: NextRequest) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tradesuite.vercel.app'}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tradesuite.vercel.app'}/signup?plan=${plan}`,
-      customer_email: email,
-      metadata: { 
-        userId: userId || 'unknown', 
-        plan, 
+      customer_email: customerId ? undefined : email,
+      customer: customerId,
+      metadata: {
+        userId: userId || 'unknown',
+        plan,
         source: 'tradesuite',
         ...(referrer && { referrer }),
       },
-      subscription_data: { 
-        metadata: { 
-          userId: userId || 'unknown', 
-          plan, 
+      subscription_data: {
+        metadata: {
+          userId: userId || 'unknown',
+          plan,
           source: 'tradesuite',
           ...(referrer && { referrer }),
-        } 
+        }
       },
     });
 
-    return NextResponse.json({ success: true, checkoutUrl: session.url, sessionId: session.id });
+    return NextResponse.json({ 
+      success: true, 
+      checkoutUrl: session.url, 
+      sessionId: session.id 
+    });
   } catch (error) {
     console.error('Checkout error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create checkout session' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: 'Failed to create checkout session' 
+    }, { status: 500 });
   }
-}// redeploy Thu Mar 19 22:00:41 CDT 2026
-// Updated Thu Mar 19 22:45:03 CDT 2026
+}

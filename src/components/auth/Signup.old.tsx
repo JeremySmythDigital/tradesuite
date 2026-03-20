@@ -3,34 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-// Lazy load PasswordStrengthMeter
-const PasswordStrengthMeter = dynamic(
-  () => import('./PasswordStrengthMeter').then((mod) => mod.PasswordStrengthMeter),
-  { ssr: false }
-);
 
 const PRICING = {
   solo: { name: 'Solo', price: 29, features: ['Unlimited clients', 'Estimates & invoices', 'Scheduling calendar', 'Industry templates', '1 user'] },
   team: { name: 'Team', price: 79, features: ['Everything in Solo', 'Up to 5 users', 'Team scheduling', 'Client portal', 'Priority support'] },
   business: { name: 'Business', price: 149, features: ['Everything in Team', 'Unlimited users', 'API access', 'Custom branding', 'Dedicated support'] },
 };
-
-// A/B test variants
-const CTA_VARIANTS = ['Start Free Trial', 'Get Started Free', 'Try TradeSuite Free'];
-const PRICING_VARIANTS = ['No credit card required', '14-day free trial', 'Cancel anytime'];
-
-function getABVariant(testId: string): string {
-  if (typeof window === 'undefined') return testId === 'cta' ? CTA_VARIANTS[0] : PRICING_VARIANTS[0];
-  
-  const stored = localStorage.getItem('ab_variants');
-  if (stored) {
-    const variants = JSON.parse(stored);
-    return variants[testId] || (testId === 'cta' ? CTA_VARIANTS[0] : PRICING_VARIANTS[0]);
-  }
-  return testId === 'cta' ? CTA_VARIANTS[0] : PRICING_VARIANTS[0];
-}
 
 export function Signup() {
   const searchParams = useSearchParams();
@@ -49,14 +27,6 @@ export function Signup() {
   const [step, setStep] = useState<'account' | 'payment'>('account');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [ctaText, setCtaText] = useState(CTA_VARIANTS[0]);
-  const [pricingText, setPricingText] = useState(PRICING_VARIANTS[0]);
-
-  // A/B test assignment
-  useEffect(() => {
-    setCtaText(getABVariant('cta'));
-    setPricingText(getABVariant('pricing'));
-  }, []);
 
   // Store referral code in session for tracking
   useEffect(() => {
@@ -90,16 +60,6 @@ export function Signup() {
       return;
     }
 
-    // Check password strength
-    const hasUpper = /[A-Z]/.test(formData.password);
-    const hasLower = /[a-z]/.test(formData.password);
-    const hasNumber = /[0-9]/.test(formData.password);
-    
-    if (!hasUpper || !hasLower || !hasNumber) {
-      setError('Password must contain uppercase, lowercase, and number');
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -125,7 +85,7 @@ export function Signup() {
           setError(regResult.error || 'Failed to create account');
         }
       }
-    } catch {
+    } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -159,7 +119,7 @@ export function Signup() {
         setError(result.error || 'Failed to start checkout');
         setLoading(false);
       }
-    } catch {
+    } catch (err) {
       setError('An error occurred. Please try again.');
       setLoading(false);
     }
@@ -213,7 +173,7 @@ export function Signup() {
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                 <input type="password" name="password" id="password" required value={formData.password} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="••••••••" />
-                <PasswordStrengthMeter password={formData.password} />
+                <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters</p>
               </div>
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm password</label>
@@ -243,9 +203,9 @@ export function Signup() {
               </div>
               {error && (<div className="rounded-md bg-red-50 p-4"><p className="text-sm text-red-700">{error}</p></div>)}
               <button onClick={handlePayment} disabled={loading} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
-                {loading ? 'Processing...' : `${ctaText} - $${PRICING[selectedPlan].price}/month`}
+                {loading ? 'Processing...' : `Subscribe for $${PRICING[selectedPlan].price}/month`}
               </button>
-              <p className="text-center text-xs text-gray-500">{pricingText}. You will be redirected to Stripe to complete your payment securely.</p>
+              <p className="text-center text-xs text-gray-500">You will be redirected to Stripe to complete your payment securely.</p>
             </div>
           )}
           <p className="mt-4 text-center text-xs text-gray-500">
