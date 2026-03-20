@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Briefcase, Users, FileText, DollarSign, Calendar, TrendingUp, Menu } from 'lucide-react';
 import { FadeIn, FadeInUp, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TestimonialCard } from '@/components/ui/TestimonialCard';
 import { SocialProofSection, HomeTestimonials } from '@/components/ui/SocialProof';
 import { Footer } from '@/components/ui/Footer';
 import { MobileNav } from '@/components/ui/MobileNav';

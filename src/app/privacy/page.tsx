@@ -91,3 +91,4 @@ export default function PrivacyPage() {
       <Footer />
     </div>
   );
+}

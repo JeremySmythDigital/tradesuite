@@ -30,7 +30,7 @@ export default function SupportPage() {
         </FadeIn>
         <FadeIn delay={0.1}>
           <p className="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            We're here to help you succeed. Choose how you'd like to get support.
+            We\'re here to help you succeed. Choose how you\'d like to get support.
           </p>
         </FadeIn>
 
@@ -138,3 +138,4 @@ export default function SupportPage() {
       <LiveChatWidget />
     </div>
   );
+}

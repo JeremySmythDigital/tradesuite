@@ -20,7 +20,7 @@ const team = [
 const values = [
   { icon: Target, title: 'Built for Trades', description: 'We understand the unique challenges of field service businesses.' },
   { icon: Zap, title: 'Fast & Simple', description: 'Software should work as fast as you do. No bloat, no complexity.' },
-  { icon: Heart, title: 'Customer First', description: 'Your success is our success. We're here to help you grow.' },
+  { icon: Heart, title: 'Customer First', description: 'Your success is our success. We\'re here to help you grow.' },
   { icon: Award, title: 'Excellence', description: 'We hold ourselves to the highest standards in everything we do.' },
 ];
 
@@ -78,7 +78,7 @@ export default function AboutPage() {
               </FadeIn>
               <FadeIn delay={0.3}>
                 <p className="text-lg text-gray-600">
-                  We're not here to sell you software. We're here to help you build a better business.
+                  We\'re not here to sell you software. We\'re here to help you build a better business.
                 </p>
               </FadeIn>
             </div>
@@ -191,3 +191,4 @@ export default function AboutPage() {
       <Footer />
     </div>
   );
+}
