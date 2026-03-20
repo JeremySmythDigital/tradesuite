@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, TreePine, Truck, FileText, DollarSign, Calendar, MapPin, Leaf, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 import { TradeMobileNav } from '@/components/ui/MobileNav';
 import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
@@ -26,10 +26,6 @@ const stats = [
   { value: '97%', label: 'Customer satisfaction' },
 ];
 
-const testimonials = [
-  { name: 'Carlos Rivera', company: 'Green Acres Landscaping', quote: 'My crews used to show up at the wrong houses. Now every property has photos and notes attached.', rating: 5, trade: 'Landscaper' },
-  { name: 'Amy Johnson', company: 'Blooms & Gardens', quote: 'Contract renewals went from headaches to automatic. My revenue is predictable for the first time.', rating: 5, trade: 'Landscaper' },
-];
 
 export default function LandscaperPage() {
   return (
@@ -228,7 +224,7 @@ export default function LandscaperPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Grow Your Landscaping Business?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-green-100 text-xl mb-8">Join 350+ landscapers who stay organized year-round.</p>
+            <p className="text-green-100 text-xl mb-8">Learn how TradeSuite can help your landscaping business who stay organized year-round.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=landscaper" className="inline-block px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-green-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

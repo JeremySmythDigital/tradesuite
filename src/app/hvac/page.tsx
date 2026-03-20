@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, Thermometer, Wind, FileText, DollarSign, Calendar, Shield, Snowflake, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 import { TradeMobileNav } from '@/components/ui/MobileNav';
 import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
@@ -26,10 +26,6 @@ const stats = [
   { value: '99%', label: 'Customer satisfaction' },
 ];
 
-const testimonials = [
-  { name: 'Tom Anderson', company: 'Comfort Air HVAC', quote: 'Maintenance contracts used to fall through the cracks. Now my customers get reminded automatically.', rating: 5, trade: 'HVAC' },
-  { name: 'Jennifer Park', company: 'Climate Control Pros', quote: 'Seasonal prep is a breeze. I know exactly which units need inspection before summer rush.', rating: 5, trade: 'HVAC' },
-];
 
 export default function HVACPage() {
   return (
@@ -228,7 +224,7 @@ export default function HVACPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stay Cool Under Pressure?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-orange-100 text-xl mb-8">Join 600+ HVAC contractors who stay organized year-round.</p>
+            <p className="text-orange-100 text-xl mb-8">Learn how TradeSuite can help your HVAC business who stay organized year-round.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=hvac" className="inline-block px-8 py-4 bg-white text-orange-700 rounded-xl hover:bg-orange-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

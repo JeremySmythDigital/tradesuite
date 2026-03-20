@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, Droplet, FileText, DollarSign, Calendar, MapPin, Wrench, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 import { TradeMobileNav } from '@/components/ui/MobileNav';
 import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
@@ -26,10 +26,6 @@ const stats = [
   { value: '97%', label: 'Customer satisfaction' },
 ];
 
-const testimonials = [
-  { name: 'Joe Martinez', company: 'Clear Flow Plumbing', quote: 'I used to lose track of which houses had what fixtures. Now every property has photos and notes.', rating: 5, trade: 'Plumber' },
-  { name: 'Dan Thompson', company: 'Thompson Plumbing Co', quote: 'Emergency calls at 2am? My dispatch sees the schedule on their phone. Game changer.', rating: 5, trade: 'Plumber' },
-];
 
 export default function PlumberPage() {
   return (
@@ -210,13 +206,17 @@ export default function PlumberPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeIn>
-              <h2 className="font-bold text-4xl mb-4 font-display">What Plumbers Say</h2>
+      <section className="py-24 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <FadeIn>
+              <h2 className="font-bold text-4xl mb-4 font-display">Built for Plumbing Professionals</h2>
             </FadeIn>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((item, index) => (
-              <TestimonialCard key={item.name} {...item} delay={index * 0.1} />
-            ))}
+            <FadeIn delay={0.1}>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Everything you need to run your plumbing business. No custom fields. No workarounds.
+              </p>
+            </FadeIn>
           </div>
           <TrustBadges />
         </div>
@@ -229,7 +229,7 @@ export default function PlumberPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stop Leaking Revenue?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-blue-100 text-xl mb-8">Join 420+ plumbers who get paid faster with TradeSuite.</p>
+            <p className="text-blue-100 text-xl mb-8">Learn how TradeSuite can help your plumbing business with TradeSuite.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=plumber" className="inline-block px-8 py-4 bg-white text-blue-700 rounded-xl hover:bg-blue-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

@@ -1,6 +1,6 @@
 'use client';
 
-import { Shield, Lock, Award, Star, Users, Clock } from 'lucide-react';
+import { Shield, Lock, Clock, Server, Cloud, ShieldCheck } from 'lucide-react';
 import { ScaleIn } from './Motion';
 
 interface TrustBadgeProps {
@@ -8,20 +8,22 @@ interface TrustBadgeProps {
   className?: string;
 }
 
+// HONEST badges - only things we can actually claim
 const badges = [
-  { icon: Shield, label: 'SOC 2 Compliant', description: 'Enterprise-grade security' },
-  { icon: Lock, label: '256-bit SSL', description: 'Encrypted data transfer' },
-  { icon: Award, label: 'BBB Accredited', description: 'A+ Rating' },
-  { icon: Star, label: '4.9/5 Rating', description: '500+ reviews' },
-  { icon: Users, label: '10,000+ Users', description: 'Growing community' },
-  { icon: Clock, label: '99.9% Uptime', description: 'Reliable service' },
+  { icon: Lock, label: 'Secure by Design', description: 'Built with security best practices' },
+  { icon: Shield, label: 'Data Encrypted', description: 'TLS 1.3 in transit, encrypted at rest' },
+  { icon: Cloud, label: 'Cloud Hosted', description: 'Reliable cloud infrastructure' },
+  { icon: Clock, label: 'Fast Performance', description: 'Optimized for speed' },
+  { icon: Server, label: '99%+ Uptime Goal', description: 'Built for reliability' },
+  { icon: ShieldCheck, label: 'Privacy First', description: 'Your data stays yours' },
 ];
 
-const awards = [
-  { name: 'Capterra', badge: 'Best Value 2025' },
-  { name: 'G2', badge: 'High Performer' },
-  { name: 'Software Advice', badge: 'FrontRunner' },
-  { name: 'GetApp', badge: 'Category Leader' },
+// Remove fake awards - only show integrations that are actually available
+const integrations = [
+  { name: 'Stripe', label: 'Payments' },
+  { name: 'QuickBooks', label: 'Accounting' },
+  { name: 'Twilio', label: 'SMS' },
+  { name: 'Google', label: 'Calendar' },
 ];
 
 export function TrustBadges({ variant = 'full', className = '' }: TrustBadgeProps) {
@@ -63,8 +65,8 @@ export function TrustBadges({ variant = 'full', className = '' }: TrustBadgeProp
   return (
     <div className={`bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-8 ${className}`}>
       <div className="text-center mb-6">
-        <h3 className="font-bold text-lg text-gray-900 mb-1">Trusted by Trade Professionals</h3>
-        <p className="text-sm text-gray-600">Enterprise-grade security and reliability</p>
+        <h3 className="font-bold text-lg text-gray-900 mb-1">Built for Trade Professionals</h3>
+        <p className="text-sm text-gray-600">Modern software, straightforward pricing</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
@@ -80,11 +82,11 @@ export function TrustBadges({ variant = 'full', className = '' }: TrustBadgeProp
       </div>
 
       <div className="flex flex-wrap justify-center gap-4">
-        {awards.map((award) => (
-          <div key={award.name} className="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
-            <span className="font-bold text-gray-900">{award.name}</span>
+        {integrations.map((integration) => (
+          <div key={integration.name} className="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2">
+            <span className="font-bold text-gray-900">{integration.name}</span>
             <span className="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-medium">
-              {award.badge}
+              {integration.label}
             </span>
           </div>
         ))}
@@ -93,21 +95,21 @@ export function TrustBadges({ variant = 'full', className = '' }: TrustBadgeProp
   );
 }
 
-// Security badges for footer/auth pages
+// Security badges for footer/auth pages - HONEST claims only
 export function SecurityBadges({ className = '' }: { className?: string }) {
   return (
     <div className={`flex flex-wrap items-center justify-center gap-6 text-sm text-gray-500 ${className}`}>
       <div className="flex items-center gap-2">
         <Lock className="w-4 h-4" />
-        <span>Bank-level Security</span>
+        <span>Encrypted Data</span>
       </div>
       <div className="flex items-center gap-2">
         <Shield className="w-4 h-4" />
-        <span>SOC 2 Type II</span>
+        <span>Secure Infrastructure</span>
       </div>
       <div className="flex items-center gap-2">
-        <Award className="w-4 h-4" />
-        <span>GDPR Compliant</span>
+        <Cloud className="w-4 h-4" />
+        <span>Cloud Hosted</span>
       </div>
     </div>
   );

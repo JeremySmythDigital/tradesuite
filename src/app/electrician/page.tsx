@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, Zap, FileText, DollarSign, Calendar, Shield, Building, Gamepad2, Menu } from 'lucide-react';
 import { FadeIn, FadeInUp, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 import { MobileNav, TradeMobileNav } from '@/components/ui/MobileNav';
 import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
@@ -24,11 +24,6 @@ const stats = [
   { value: '3.8x', label: 'Quote-to-close rate' },
   { value: '12hrs', label: 'Saved per week' },
   { value: '98%', label: 'Customer satisfaction' },
-];
-
-const testimonials = [
-  { name: 'Mike Roberts', company: 'Roberts Electric LLC', quote: 'Panel upgrade quotes used to take me an hour. Now I crank them out in 10 minutes.', rating: 5, trade: 'Electrician' },
-  { name: 'Sarah Chen', company: 'Bright Spark Electric', quote: 'Finally, software that understands what electricians actually do. No more generic CRMs.', rating: 5, trade: 'Electrician' },
 ];
 
 export default function ElectricianPage() {
@@ -211,13 +206,13 @@ export default function ElectricianPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <FadeIn>
-              <h2 className="font-bold text-4xl mb-4 font-display">What Electricians Say</h2>
+              <h2 className="font-bold text-4xl mb-4 font-display">Built for Electrical Contractors</h2>
             </FadeIn>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((item, index) => (
-              <TestimonialCard key={item.name} {...item} delay={index * 0.1} />
-            ))}
+            <FadeIn delay={0.1}>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Everything you need to run your electrical business. No custom fields. No workarounds.
+              </p>
+            </FadeIn>
           </div>
           <TrustBadges />
         </div>
@@ -230,7 +225,7 @@ export default function ElectricianPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Power Up Your Business?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-amber-100 text-xl mb-8">Join 850+ electricians who close more jobs with TradeSuite.</p>
+            <p className="text-amber-100 text-xl mb-8">Learn how TradeSuite can help your electrical business with TradeSuite.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=electrician" className="inline-block px-8 py-4 bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

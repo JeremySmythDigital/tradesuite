@@ -2,7 +2,7 @@ import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, Home, Shield, FileText, DollarSign, Camera, Hammer, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
-import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 import { TradeMobileNav } from '@/components/ui/MobileNav';
 import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
@@ -26,10 +26,6 @@ const stats = [
   { value: '98%', label: 'Customer satisfaction' },
 ];
 
-const testimonials = [
-  { name: 'Robert Martinez', company: 'TopTier Roofing', quote: 'Insurance claims used to eat my weekends. Now I generate the report in 5 minutes.', rating: 5, trade: 'Roofer' },
-  { name: 'James Wilson', company: 'Wilson & Sons Roofing', quote: 'Photo documentation is a game changer. Customers can see exactly what needs fixing.', rating: 5, trade: 'Roofer' },
-];
 
 export default function RooferPage() {
   return (
@@ -228,7 +224,7 @@ export default function RooferPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Stop Climbing Ladders for Paperwork?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-slate-300 text-xl mb-8">Join 280+ roofers who close more deals with better estimates.</p>
+            <p className="text-slate-300 text-xl mb-8">Learn how TradeSuite can help your roofing business who close more deals with better estimates.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=roofer" className="inline-block px-8 py-4 bg-yellow-500 text-slate-900 rounded-xl hover:bg-yellow-400 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">
