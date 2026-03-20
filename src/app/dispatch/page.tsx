@@ -1,153 +1,200 @@
 'use client';
 
-import { useState } from 'react';
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { 
-  Calendar, ChevronLeft, ChevronRight, Plus, Users, MapPin, Phone,
-  Clock, Wrench, CheckCircle, AlertCircle, Truck, Settings
-} from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { getTechnicians, assignJobToTechnician, completeJob, type Technician } from '@/lib/directus-extensions';
+import { getJobs } from '@/lib/directus';
 
+// Types
 interface Job {
   id: string;
-  customer: string;
+  title: string;
+  status: 'lead' | 'scheduled' | 'in_progress' | 'completed';
   address: string;
-  phone: string;
-  trade: string;
-  type: string;
-  assignedTo: string | null;
-  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
-  startTime: string;
-  duration: number; // hours
-  notes?: string;
+  scheduled_date?: string;
+  client_id?: { name: string; phone?: string } | string;
+  assigned_technician_id?: string;
 }
 
-const mockJobs: Job[] = [
-  { id: '1', customer: 'John Smith', address: '123 Main St, Sacramento', phone: '(916) 555-0101', trade: 'electrician', type: 'Panel Upgrade', assignedTo: 'Mike Roberts', status: 'scheduled', startTime: '08:00', duration: 4, notes: '200A panel upgrade' },
-  { id: '2', customer: 'Sarah Johnson', address: '456 Oak Ave, Sacramento', phone: '(916) 555-0102', trade: 'plumber', type: 'Water Heater Install', assignedTo: 'Tom Chen', status: 'scheduled', startTime: '09:00', duration: 3 },
-  { id: '3', customer: 'Bob Williams', address: '789 Pine Rd, Sacramento', phone: '(916) 555-0103', trade: 'hvac', type: 'AC Repair', assignedTo: 'Dave Kim', status: 'in_progress', startTime: '10:30', duration: 2 },
-  { id: '4', customer: 'Lisa Brown', address: '321 Elm St, Sacramento', phone: '(916) 555-0104', trade: 'landscaper', type: 'Lawn Maintenance', assignedTo: null, status: 'scheduled', startTime: '07:00', duration: 1 },
-  { id: '5', customer: 'Mike Davis', address: '654 Cedar Ln, Sacramento', phone: '(916) 555-0105', trade: 'roofer', type: 'Inspection', assignedTo: 'James Wilson', status: 'completed', startTime: '11:00', duration: 1, notes: 'Annual roof inspection' },
+// Sample technicians for demo
+const SAMPLE_TECHNICIANS: Technician[] = [
+  { id: '1', name: 'Mike Johnson', email: 'mike@cypresssignal.com', phone: '555-0101', current_status: 'available', trades: ['plumbing', 'hvac'], current_lat: 29.7604, current_lng: -95.3698 },
+  { id: '2', name: 'Sarah Chen', email: 'sarah@cypresssignal.com', phone: '555-0102', current_status: 'busy', trades: ['electrical'], current_lat: 29.7554, current_lng: -95.3598, current_job_id: 'job-1' },
+  { id: '3', name: 'Carlos Rivera', email: 'carlos@cypresssignal.com', phone: '555-0103', current_status: 'available', trades: ['landscaping', 'general'], current_lat: 29.7654, current_lng: -95.3798 },
+  { id: '4', name: 'Emma Wilson', email: 'emma@cypresssignal.com', phone: '555-0104', current_status: 'offline', trades: ['roofing'], current_lat: 29.7504, current_lng: -95.3698 },
 ];
 
-const technicians = [
-  { id: '1', name: 'Mike Roberts', trade: 'electrician', status: 'available' },
-  { id: '2', name: 'Tom Chen', trade: 'plumber', status: 'on_job' },
-  { id: '3', name: 'Dave Kim', trade: 'hvac', status: 'available' },
-  { id: '4', name: 'James Wilson', trade: 'roofer', status: 'available' },
-  { id: '5', name: 'Emily Garcia', trade: 'landscaper', status: 'on_job' },
+// Sample jobs for demo
+const SAMPLE_JOBS: Job[] = [
+  { id: 'job-1', title: 'AC Unit Repair', status: 'in_progress', address: '123 Main St, Houston, TX', client_id: { name: 'John Smith', phone: '555-1234' }, assigned_technician_id: '2' },
+  { id: 'job-2', title: 'Electrical Panel Upgrade', status: 'scheduled', address: '456 Oak Ave, Houston, TX', client_id: { name: 'Jane Doe', phone: '555-5678' }, scheduled_date: '2026-03-20T14:00:00' },
+  { id: 'job-3', title: 'Faucet Installation', status: 'lead', address: '789 Pine Rd, Houston, TX', client_id: { name: 'Bob Wilson', phone: '555-9012' } },
+  { id: 'job-4', title: 'Roof Inspection', status: 'scheduled', address: '321 Elm St, Houston, TX', client_id: { name: 'Alice Brown', phone: '555-3456' }, scheduled_date: '2026-03-20T16:00:00' },
 ];
 
-const statusColors: Record<string, string> = {
-  scheduled: 'bg-blue-100 text-blue-800 border-blue-200',
-  in_progress: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  completed: 'bg-green-100 text-green-800 border-green-200',
-  cancelled: 'bg-red-100 text-red-800 border-red-200',
-};
-
-const tradeColors: Record<string, string> = {
-  electrician: 'bg-yellow-100 text-yellow-800',
-  plumber: 'bg-blue-100 text-blue-800',
-  hvac: 'bg-orange-100 text-orange-800',
-  landscaper: 'bg-green-100 text-green-800',
-  roofer: 'bg-slate-100 text-slate-800',
-};
-
-export default function DispatchBoard() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [view, setView] = useState<'day' | 'week'>('day');
-  const [jobs, setJobs] = useState<Job[]>(mockJobs);
+export default function DispatchPage() {
+  const [technicians, setTechnicians] = useState<Technician[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [selectedTech, setSelectedTech] = useState<Technician | null>(null);
+  const [view, setView] = useState<'kanban' | 'map'>('kanban');
+  const [loading, setLoading] = useState(true);
+  
+  // Drag state
+  const [draggedJob, setDraggedJob] = useState<Job | null>(null);
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  // Column definitions
+  const columns = [
+    { id: 'lead', title: 'Leads', color: 'bg-gray-100' },
+    { id: 'scheduled', title: 'Scheduled', color: 'bg-blue-50' },
+    { id: 'in_progress', title: 'In Progress', color: 'bg-yellow-50' },
+    { id: 'completed', title: 'Completed', color: 'bg-green-50' },
+  ];
+
+  // Fetch data on mount
+  useEffect(() => {
+    fetchData();
+    
+    // Set up simulated GPS polling for demo
+    const interval = setInterval(() => {
+      updateTechnicianLocations();
+    }, 30000); // Every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    
+    // Try Directus first
+    const techResult = await getTechnicians();
+    const jobsResult = await getJobs();
+    
+    if (techResult.success && techResult.data && techResult.data.length > 0) {
+      setTechnicians(techResult.data);
+    } else {
+      // Use sample data for demo
+      setTechnicians(SAMPLE_TECHNICIANS);
+    }
+    
+    if (jobsResult.success && jobsResult.data) {
+      setJobs(jobsResult.data as Job[]);
+    } else {
+      // Use sample data for demo
+      setJobs(SAMPLE_JOBS);
+    }
+    
+    setLoading(false);
   };
 
-  const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
-    setSelectedDate(newDate);
+  // Simulate GPS location updates
+  const updateTechnicianLocations = () => {
+    setTechnicians(prev => prev.map(tech => {
+      if (tech.current_status === 'busy' || tech.current_status === 'available') {
+        // Small random movement to simulate GPS drift
+        const latOffset = (Math.random() - 0.5) * 0.001;
+        const lngOffset = (Math.random() - 0.5) * 0.001;
+        return {
+          ...tech,
+          current_lat: (tech.current_lat || 29.7604) + latOffset,
+          current_lng: (tech.current_lng || -95.3698) + lngOffset,
+        };
+      }
+      return tech;
+    }));
   };
 
-  const scheduledJobs = jobs.filter(j => j.status === 'scheduled');
-  const inProgressJobs = jobs.filter(j => j.status === 'in_progress');
-  const completedJobs = jobs.filter(j => j.status === 'completed');
+  // Handle job assignment
+  const handleAssignJob = async (jobId: string, techId: string) => {
+    const result = await assignJobToTechnician(jobId, techId);
+    if (result.success) {
+      setJobs(prev => prev.map(job => 
+        job.id === jobId ? { ...job, status: 'scheduled', assigned_technician_id: techId } : job
+      ));
+      setTechnicians(prev => prev.map(tech => 
+        tech.id === techId ? { ...tech, current_status: 'busy', current_job_id: jobId } : tech
+      ));
+    } else {
+      // Update local state for demo
+      setJobs(prev => prev.map(job => 
+        job.id === jobId ? { ...job, status: 'scheduled', assigned_technician_id: techId } : job
+      ));
+      setTechnicians(prev => prev.map(tech => 
+        tech.id === techId ? { ...tech, current_status: 'busy', current_job_id: jobId } : tech
+      ));
+    }
+    setSelectedJob(null);
+    setSelectedTech(null);
+  };
+
+  // Handle job completion
+  const handleCompleteJob = async (jobId: string, techId: string) => {
+    const result = await completeJob(techId);
+    if (result.success) {
+      setJobs(prev => prev.map(job => 
+        job.id === jobId ? { ...job, status: 'completed' } : job
+      ));
+      setTechnicians(prev => prev.map(tech => 
+        tech.id === techId ? { ...tech, current_status: 'available', current_job_id: undefined } : tech
+      ));
+    } else {
+      // Update local state for demo
+      setJobs(prev => prev.map(job => 
+        job.id === jobId ? { ...job, status: 'completed' } : job
+      ));
+      setTechnicians(prev => prev.map(tech => 
+        tech.id === techId ? { ...tech, current_status: 'available', current_job_id: undefined } : tech
+      ));
+    }
+  };
+
+  // Drag handlers (simplified without @dnd-kit for now)
+  const handleDragStart = (job: Job) => {
+    setDraggedJob(job);
+  };
+
+  const handleDrop = (status: string) => {
+    if (draggedJob) {
+      setJobs(prev => prev.map(job => 
+        job.id === draggedJob.id ? { ...job, status: status as Job['status'] } : job
+      ));
+      setDraggedJob(null);
+    }
+  };
+
+  // Get technician by ID
+  const getTechById = (id: string) => technicians.find(t => t.id === id);
+
+  // Group jobs by status
+  const jobsByStatus = columns.reduce((acc, col) => {
+    acc[col.id] = jobs.filter(job => job.status === col.id);
+    return acc;
+  }, {} as Record<string, Job[]>);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <Wrench className="w-8 h-8 text-blue-600" />
-              <span className="font-bold text-2xl">Cypress Signal</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <nav className="hidden md:flex items-center gap-6">
-                <Link href="/jobs" className="text-gray-600 hover:text-gray-900">Jobs</Link>
-                <Link href="/clients" className="text-gray-600 hover:text-gray-900">Clients</Link>
-                <Link href="/estimates" className="text-gray-600 hover:text-gray-900">Estimates</Link>
-                <Link href="/dispatch" className="text-blue-600 font-medium">Dispatch</Link>
-              </nav>
-              <Link 
-                href="/" 
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Dispatch Board</h1>
+              <p className="text-sm text-gray-500">
+                {technicians.filter(t => t.current_status === 'available').length} techs available · {' '}
+                {jobs.filter(j => j.status === 'in_progress').length} jobs in progress
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setView('kanban')}
+                className={`px-4 py-2 rounded-md ${view === 'kanban' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}
               >
-                Exit Demo
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Toolbar */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900 font-display">Dispatch Board</h1>
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setView('day')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                    view === 'day' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                  }`}
-                >
-                  Day
-                </button>
-                <button
-                  onClick={() => setView('week')}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                    view === 'week' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-                  }`}
-                >
-                  Week
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => navigateDate('prev')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <span className="font-medium text-gray-900 min-w-[140px] text-center">
-                  {formatDate(selectedDate)}
-                </span>
-                <button
-                  onClick={() => navigateDate('next')}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                <Plus className="w-4 h-4" />
-                New Job
+                Kanban
+              </button>
+              <button
+                onClick={() => setView('map')}
+                className={`px-4 py-2 rounded-md ${view === 'map' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'}`}
+              >
+                Map
               </button>
             </div>
           </div>
@@ -155,257 +202,183 @@ export default function DispatchBoard() {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Technicians */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-bold text-gray-900">Technicians</h2>
-                  <Users className="w-5 h-5 text-gray-400" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading...</div>
+        ) : view === 'kanban' ? (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {columns.map(col => (
+              <div
+                key={col.id}
+                className={`${col.color} rounded-lg p-4 min-h-[400px]`}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => handleDrop(col.id)}
+              >
+                <h3 className="font-semibold mb-3 flex items-center justify-between">
+                  {col.title}
+                  <span className="bg-white px-2 py-1 rounded text-sm">
+                    {jobsByStatus[col.id]?.length || 0}
+                  </span>
+                </h3>
+                <div className="space-y-3">
+                  {jobsByStatus[col.id]?.map(job => {
+                    const assignedTech = job.assigned_technician_id ? getTechById(job.assigned_technician_id) : null;
+                    return (
+                      <div
+                        key={job.id}
+                        draggable
+                        onDragStart={() => handleDragStart(job)}
+                        onClick={() => setSelectedJob(job)}
+                        className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+                      >
+                        <div className="font-medium">{job.title}</div>
+                        <div className="text-sm text-gray-500 mt-1">{job.address}</div>
+                        {assignedTech && (
+                          <div className="mt-2 flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-xs">
+                              {assignedTech.name.charAt(0)}
+                            </div>
+                            <span className="text-sm">{assignedTech.name}</span>
+                          </div>
+                        )}
+                        {job.scheduled_date && (
+                          <div className="mt-2 text-xs text-gray-400">
+                            {new Date(job.scheduled_date).toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-              <div className="divide-y divide-gray-100">
-                {technicians.map((tech) => (
-                  <div key={tech.id} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium ${
-                          tech.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                        }`}>
-                          {tech.name.split(' ').map(n => n[0]).join('')}
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{tech.name}</p>
-                          <p className="text-sm text-gray-500 capitalize">{tech.trade}</p>
-                        </div>
-                      </div>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        tech.status === 'available' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {tech.status === 'available' ? 'Available' : 'On Job'}
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Map Placeholder */}
+            <div className="lg:col-span-2 bg-white rounded-lg shadow h-[600px] flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-4xl mb-4">🗺️</div>
+                <div className="text-lg font-medium text-gray-700">Interactive Map</div>
+                <div className="text-sm text-gray-500 mt-2">
+                  {technicians.length} technicians in the field
+                </div>
+                <div className="mt-4 space-y-2">
+                  {technicians.filter(t => t.current_lat).map(tech => (
+                    <div key={tech.id} className="text-sm text-gray-600">
+                      {tech.name}: ({tech.current_lat?.toFixed(4)}, {tech.current_lng?.toFixed(4)}) - {' '}
+                      <span className={`font-medium ${tech.current_status === 'available' ? 'text-green-600' : tech.current_status === 'busy' ? 'text-yellow-600' : 'text-gray-400'}`}>
+                        {tech.current_status}
                       </span>
                     </div>
+                  ))}
+                </div>
+                <div className="mt-4 text-xs text-gray-400">
+                  Add Leaflet or Mapbox integration for full map view
+                </div>
+              </div>
+            </div>
+
+            {/* Technician List */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="font-semibold mb-4">Technicians</h3>
+              <div className="space-y-3">
+                {technicians.map(tech => (
+                  <div
+                    key={tech.id}
+                    onClick={() => setSelectedTech(tech)}
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedTech?.id === tech.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{tech.name}</div>
+                        <div className="text-sm text-gray-500">{tech.trades.join(', ')}</div>
+                      </div>
+                      <div className={`w-3 h-3 rounded-full ${tech.current_status === 'available' ? 'bg-green-500' : tech.current_status === 'busy' ? 'bg-yellow-500' : 'bg-gray-400'}`} />
+                    </div>
+                    {tech.current_job_id && (
+                      <div className="mt-2 text-sm">
+                        Working on: {jobs.find(j => j.id === tech.current_job_id)?.title || 'Unknown job'}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           </div>
+        )}
+      </div>
 
-          {/* Right Columns - Jobs by Status */}
-          <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Scheduled */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200 bg-blue-50">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-blue-900">Scheduled</h3>
-                    <span className="px-2 py-0.5 bg-blue-200 text-blue-800 rounded-full text-sm font-medium">
-                      {scheduledJobs.length}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-2 space-y-2 max-h-[600px] overflow-y-auto">
-                  {scheduledJobs.map((job) => (
-                    <div
-                      key={job.id}
-                      onClick={() => setSelectedJob(job)}
-                      className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
-                        selectedJob?.id === job.id ? 'border-blue-500 bg-blue-50' : 'border-transparent bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <p className="font-medium text-gray-900">{job.customer}</p>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${tradeColors[job.trade]}`}>
-                          {job.trade}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-700">{job.type}</p>
-                      <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <span>{job.startTime} ({job.duration}h)</span>
-                      </div>
-                      {job.assignedTo ? (
-                        <div className="mt-2 text-sm text-gray-600">
-                          <span className="font-medium">Assigned:</span> {job.assignedTo}
-                        </div>
-                      ) : (
-                        <div className="mt-2 text-sm text-yellow-600 font-medium">
-                          ⚠️ Unassigned
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {scheduledJobs.length === 0 && (
-                    <div className="p-4 text-center text-gray-500">
-                      <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No scheduled jobs</p>
-                    </div>
-                  )}
-                </div>
+      {/* Job Detail Modal */}
+      {selectedJob && !draggedJob && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-xl font-bold">{selectedJob.title}</h2>
+              <button onClick={() => setSelectedJob(null)} className="text-gray-400 hover:text-gray-600">
+                ✕
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm text-gray-500">Status</div>
+                <div className="font-medium capitalize">{selectedJob.status.replace('_', ' ')}</div>
               </div>
-
-              {/* In Progress */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200 bg-yellow-50">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-yellow-900">In Progress</h3>
-                    <span className="px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded-full text-sm font-medium">
-                      {inProgressJobs.length}
-                    </span>
+              
+              <div>
+                <div className="text-sm text-gray-500">Address</div>
+                <div className="font-medium">{selectedJob.address}</div>
+              </div>
+              
+              {selectedJob.client_id && (
+                <div>
+                  <div className="text-sm text-gray-500">Client</div>
+                  <div className="font-medium">
+                    {typeof selectedJob.client_id === 'string' ? selectedJob.client_id : selectedJob.client_id.name}
                   </div>
                 </div>
-                <div className="p-2 space-y-2 max-h-[600px] overflow-y-auto">
-                  {inProgressJobs.map((job) => (
-                    <div
-                      key={job.id}
-                      onClick={() => setSelectedJob(job)}
-                      className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
-                        selectedJob?.id === job.id ? 'border-yellow-500 bg-yellow-50' : 'border-transparent bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <p className="font-medium text-gray-900">{job.customer}</p>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${tradeColors[job.trade]}`}>
-                          {job.trade}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-700">{job.type}</p>
-                      <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <span>{job.startTime} ({job.duration}h)</span>
-                      </div>
-                      <div className="mt-2 text-sm text-gray-600">
-                        <span className="font-medium">Assigned:</span> {job.assignedTo}
-                      </div>
-                      <button className="mt-2 w-full py-1.5 bg-green-100 text-green-700 rounded-md text-sm font-medium hover:bg-green-200 transition-colors">
-                        Mark Complete
+              )}
+              
+              {selectedJob.assigned_technician_id && (
+                <div>
+                  <div className="text-sm text-gray-500">Assigned To</div>
+                  <div className="font-medium">{getTechById(selectedJob.assigned_technician_id)?.name || 'Unassigned'}</div>
+                </div>
+              )}
+              
+              {selectedJob.status === 'lead' && (
+                <div className="pt-4 border-t">
+                  <div className="text-sm text-gray-500 mb-2">Assign Technician</div>
+                  <div className="space-y-2">
+                    {technicians.filter(t => t.current_status === 'available').map(tech => (
+                      <button
+                        key={tech.id}
+                        onClick={() => handleAssignJob(selectedJob.id, tech.id)}
+                        className="w-full text-left px-3 py-2 rounded border hover:bg-blue-50 transition-colors"
+                      >
+                        {tech.name} - {tech.trades.join(', ')}
                       </button>
-                    </div>
-                  ))}
-                  {inProgressJobs.length === 0 && (
-                    <div className="p-4 text-center text-gray-500">
-                      <Truck className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No jobs in progress</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Completed */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-4 border-b border-gray-200 bg-green-50">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-green-900">Completed</h3>
-                    <span className="px-2 py-0.5 bg-green-200 text-green-800 rounded-full text-sm font-medium">
-                      {completedJobs.length}
-                    </span>
+                    ))}
+                    {technicians.filter(t => t.current_status === 'available').length === 0 && (
+                      <div className="text-sm text-gray-500">No available technicians</div>
+                    )}
                   </div>
                 </div>
-                <div className="p-2 space-y-2 max-h-[600px] overflow-y-auto">
-                  {completedJobs.map((job) => (
-                    <div
-                      key={job.id}
-                      onClick={() => setSelectedJob(job)}
-                      className={`p-3 rounded-lg border-2 cursor-pointer transition-all hover:shadow-md ${
-                        selectedJob?.id === job.id ? 'border-green-500 bg-green-50' : 'border-transparent bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <p className="font-medium text-gray-900">{job.customer}</p>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${tradeColors[job.trade]}`}>
-                          {job.trade}
-                        </span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-700">{job.type}</p>
-                      <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span>Completed today</span>
-                      </div>
-                      <div className="mt-2">
-                        <button className="w-full py-1.5 bg-blue-100 text-blue-700 rounded-md text-sm font-medium hover:bg-blue-200 transition-colors">
-                          Create Invoice
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  {completedJobs.length === 0 && (
-                    <div className="p-4 text-center text-gray-500">
-                      <CheckCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                      <p>No completed jobs</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+              )}
+              
+              {selectedJob.status === 'in_progress' && selectedJob.assigned_technician_id && (
+                <button
+                  onClick={() => handleCompleteJob(selectedJob.id, selectedJob.assigned_technician_id!)}
+                  className="w-full mt-4 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors"
+                >
+                  Mark Complete
+                </button>
+              )}
             </div>
           </div>
         </div>
-
-        {/* Job Details Modal */}
-        {selectedJob && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-gray-900">{selectedJob.type}</h3>
-                  <button
-                    onClick={() => setSelectedJob(null)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    ✕
-                  </button>
-                </div>
-                <span className={`inline-block mt-2 px-2 py-1 rounded text-sm font-medium ${statusColors[selectedJob.status]}`}>
-                  {selectedJob.status.replace('_', ' ')}
-                </span>
-              </div>
-              <div className="p-6 space-y-4">
-                <div>
-                  <p className="text-sm text-gray-500">Customer</p>
-                  <p className="font-medium text-gray-900">{selectedJob.customer}</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-gray-900">{selectedJob.address}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-                  <p className="font-medium text-gray-900">{selectedJob.phone}</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-gray-900">{selectedJob.startTime} · {selectedJob.duration} hours</p>
-                  </div>
-                </div>
-                {selectedJob.assignedTo && (
-                  <div>
-                    <p className="text-sm text-gray-500">Assigned To</p>
-                    <p className="font-medium text-gray-900">{selectedJob.assignedTo}</p>
-                  </div>
-                )}
-                {selectedJob.notes && (
-                  <div>
-                    <p className="text-sm text-gray-500">Notes</p>
-                    <p className="text-gray-900">{selectedJob.notes}</p>
-                  </div>
-                )}
-              </div>
-              <div className="p-6 bg-gray-50 flex gap-3">
-                <button className="flex-1 py-2 border border-gray-300 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                  Reschedule
-                </button>
-                <button className="flex-1 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
-                  Edit Job
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </main>
+      )}
     </div>
   );
 }

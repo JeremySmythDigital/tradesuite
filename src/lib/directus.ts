@@ -1,4 +1,4 @@
-import { createDirectus, rest, authentication, readMe, readItems, createItem } from '@directus/sdk';
+import { createDirectus, rest, authentication, readMe, readItems, createItem, updateItem, deleteItem } from '@directus/sdk';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus-production-1dd5.up.railway.app';
 
