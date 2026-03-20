@@ -1,14 +1,14 @@
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, Home, Shield, FileText, DollarSign, Camera, Hammer, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
 import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { Footer } from '@/components/ui/Footer';
+import { TradeMobileNav } from '@/components/ui/MobileNav';
+import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Roofer CRM - TradeSuite',
-  description: 'The CRM built specifically for roofing contractors. Manage roof replacements, repairs, inspections, and estimates.',
-  keywords: 'roofer CRM, roofing contractor software, roofing scheduling, roof replacement tracking',
-};
+export const metadata: Metadata = generateTradeMetadata('roofer');
+export const viewport: Viewport = generateTradeViewport('roofer');
 
 const features = [
   { icon: Home, title: 'Roof Inspections', description: 'Document damage with photos, measurements, and notes.' },
@@ -44,8 +44,10 @@ export default function RooferPage() {
               <Briefcase className="w-8 h-8 text-slate-600" />
               <span className="font-bold text-2xl">TradeSuite</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/electrician/game" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-600 to-slate-800 text-white rounded-lg hover:from-slate-700 hover:to-slate-900 transition-all font-medium shadow-md">
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-4">
+              <Link href="/roofer/game" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-600 to-slate-800 text-white rounded-lg hover:from-slate-700 hover:to-slate-900 transition-all font-medium shadow-md">
                 <Gamepad2 className="w-4 h-4" />
                 Play Simulator
               </Link>
@@ -54,6 +56,9 @@ export default function RooferPage() {
                 Start Free Trial
               </Link>
             </div>
+            
+            {/* Mobile Nav */}
+            <TradeMobileNav trade="roofer" tradeColor="slate" signupLink="/signup?trade=roofer" gameLink="/roofer/game" />
           </div>
         </div>
       </header>
@@ -64,9 +69,9 @@ export default function RooferPage() {
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 text-white">
               <Gamepad2 className="w-5 h-5" />
-              <span className="font-medium">NEW: Try the Trade Business Simulator</span>
+              <span className="font-medium">NEW: Try the Roofer Business Simulator</span>
             </div>
-            <Link href="/electrician/game" className="px-4 py-1.5 bg-white text-slate-700 rounded-lg font-medium text-sm hover:bg-slate-50 transition-colors">
+            <Link href="/roofer/game" className="px-4 py-1.5 bg-white text-slate-700 rounded-lg font-medium text-sm hover:bg-slate-50 transition-colors">
               Play Now - Takes 3 Minutes →
             </Link>
           </div>
@@ -94,7 +99,7 @@ export default function RooferPage() {
                   <Link href="/signup?trade=roofer" className="px-8 py-4 bg-yellow-500 text-slate-900 rounded-xl hover:bg-yellow-400 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                     Start Free Trial
                   </Link>
-                  <Link href="/electrician/game" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all font-medium text-lg flex items-center gap-2 justify-center">
+                  <Link href="/roofer/game" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all font-medium text-lg flex items-center gap-2 justify-center">
                     <Gamepad2 className="w-5 h-5" />
                     Try the Simulator
                   </Link>
@@ -162,7 +167,7 @@ export default function RooferPage() {
           <FadeIn delay={0.4}>
             <div className="text-center mt-8">
               <Link
-                href="/electrician/game"
+                href="/roofer/game"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-800 text-white rounded-lg font-medium hover:from-slate-700 hover:to-slate-900 transition-all shadow-md"
               >
                 <Gamepad2 className="w-5 h-5" />
@@ -233,17 +238,7 @@ export default function RooferPage() {
         </div>
       </section>
 
-      <footer className="py-12 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Briefcase className="w-6 h-6 text-slate-400" />
-              <span className="font-bold text-white">TradeSuite</span>
-            </Link>
-            <p className="text-sm">© {new Date().getFullYear()} TradeSuite. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer trade="roofer" tradeColor="slate" />
     </div>
   );
 }

@@ -1,13 +1,15 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Briefcase, Users, FileText, DollarSign, Calendar, TrendingUp } from 'lucide-react';
+import { Briefcase, Users, FileText, DollarSign, Calendar, TrendingUp, Menu } from 'lucide-react';
 import { FadeIn, FadeInUp, ScaleIn, BlurBlob } from '@/components/ui/Motion';
+import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { SocialProofSection, HomeTestimonials } from '@/components/ui/SocialProof';
+import { Footer } from '@/components/ui/Footer';
+import { MobileNav } from '@/components/ui/MobileNav';
+import { baseMetadata, viewport } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'TradeSuite - The CRM Built for Your Trade',
-  description: 'Trade-specific CRM for electricians, plumbers, HVAC, landscapers, and roofers. Manage clients, jobs, estimates, invoices, and scheduling.',
-  keywords: 'electrician CRM, plumber software, HVAC scheduling, landscaper management, roofing estimates',
-};
+export const metadata: Metadata = baseMetadata;
+export { viewport };
 
 const trades = [
   { name: 'Electrician', href: '/electrician', color: 'from-yellow-500 to-orange-500', hoverColor: 'hover:border-yellow-400' },
@@ -105,13 +107,19 @@ export default function HomePage() {
               <Briefcase className="w-8 h-8 text-blue-600" />
               <span className="font-bold text-2xl">TradeSuite</span>
             </Link>
-            <div className="flex items-center gap-6">
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-6">
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
               <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-              <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                Sign In
+              <Link href="/login" className="text-gray-600 hover:text-gray-900 transition-colors">Sign In</Link>
+              <Link href="/signup" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                Start Free Trial
               </Link>
             </div>
+            
+            {/* Mobile Nav */}
+            <MobileNav />
           </div>
         </nav>
       </header>
@@ -139,6 +147,7 @@ export default function HomePage() {
                 See How It Works
               </a>
             </div>
+            <p className="text-sm text-gray-500 mt-3">No credit card required • 14-day free trial</p>
           </FadeIn>
         </div>
 
@@ -166,6 +175,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Social Proof */}
+      <SocialProofSection />
 
       {/* Features */}
       <section id="features" className="py-24 bg-white relative">
@@ -221,6 +233,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <HomeTestimonials />
 
       {/* Pricing */}
       <section id="pricing" className="py-24 bg-white relative">
@@ -309,22 +324,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Briefcase className="w-6 h-6 text-blue-500" />
-              <span className="font-bold text-white">TradeSuite</span>
-            </Link>
-            <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="/support" className="hover:text-white transition-colors">Support</Link>
-            </div>
-            <p className="text-sm">© {new Date().getFullYear()} TradeSuite. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,14 +1,14 @@
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { Briefcase, TreePine, Truck, FileText, DollarSign, Calendar, MapPin, Leaf, Gamepad2 } from 'lucide-react';
 import { FadeIn, ScaleIn, BlurBlob } from '@/components/ui/Motion';
 import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { Footer } from '@/components/ui/Footer';
+import { TradeMobileNav } from '@/components/ui/MobileNav';
+import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Landscaper CRM - TradeSuite',
-  description: 'The CRM built specifically for landscapers. Manage maintenance contracts, design projects, installations, and more.',
-  keywords: 'landscaper CRM, landscaping contractor software, lawn care scheduling, landscape design tracking',
-};
+export const metadata: Metadata = generateTradeMetadata('landscaper');
+export const viewport: Viewport = generateTradeViewport('landscaper');
 
 const features = [
   { icon: Leaf, title: 'Maintenance Routes', description: 'Schedule weekly/bi-weekly visits and track crew locations.' },
@@ -44,8 +44,10 @@ export default function LandscaperPage() {
               <Briefcase className="w-8 h-8 text-green-600" />
               <span className="font-bold text-2xl">TradeSuite</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/electrician/game" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all font-medium shadow-md">
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-4">
+              <Link href="/landscaper/game" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all font-medium shadow-md">
                 <Gamepad2 className="w-4 h-4" />
                 Play Simulator
               </Link>
@@ -54,6 +56,9 @@ export default function LandscaperPage() {
                 Start Free Trial
               </Link>
             </div>
+            
+            {/* Mobile Nav */}
+            <TradeMobileNav trade="landscaper" tradeColor="green" signupLink="/signup?trade=landscaper" gameLink="/landscaper/game" />
           </div>
         </div>
       </header>
@@ -64,9 +69,9 @@ export default function LandscaperPage() {
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 text-white">
               <Gamepad2 className="w-5 h-5" />
-              <span className="font-medium">NEW: Try the Trade Business Simulator</span>
+              <span className="font-medium">NEW: Try the Landscaper Business Simulator</span>
             </div>
-            <Link href="/electrician/game" className="px-4 py-1.5 bg-white text-green-700 rounded-lg font-medium text-sm hover:bg-green-50 transition-colors">
+            <Link href="/landscaper/game" className="px-4 py-1.5 bg-white text-green-700 rounded-lg font-medium text-sm hover:bg-green-50 transition-colors">
               Play Now - Takes 3 Minutes →
             </Link>
           </div>
@@ -94,7 +99,7 @@ export default function LandscaperPage() {
                   <Link href="/signup?trade=landscaper" className="px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-green-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                     Start Free Trial
                   </Link>
-                  <Link href="/electrician/game" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all font-medium text-lg flex items-center gap-2 justify-center">
+                  <Link href="/landscaper/game" className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all font-medium text-lg flex items-center gap-2 justify-center">
                     <Gamepad2 className="w-5 h-5" />
                     Try the Simulator
                   </Link>
@@ -162,7 +167,7 @@ export default function LandscaperPage() {
           <FadeIn delay={0.4}>
             <div className="text-center mt-8">
               <Link
-                href="/electrician/game"
+                href="/landscaper/game"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-600 transition-all shadow-md"
               >
                 <Gamepad2 className="w-5 h-5" />
@@ -233,17 +238,7 @@ export default function LandscaperPage() {
         </div>
       </section>
 
-      <footer className="py-12 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Briefcase className="w-6 h-6 text-green-500" />
-              <span className="font-bold text-white">TradeSuite</span>
-            </Link>
-            <p className="text-sm">© {new Date().getFullYear()} TradeSuite. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer trade="landscaper" tradeColor="green" />
     </div>
   );
 }

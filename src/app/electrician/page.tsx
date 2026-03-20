@@ -1,14 +1,14 @@
-import { Metadata } from 'next';
+import { Metadata, Viewport } from 'next';
 import Link from 'next/link';
-import { Briefcase, Zap, FileText, DollarSign, Calendar, Shield, Building, Gamepad2 } from 'lucide-react';
+import { Briefcase, Zap, FileText, DollarSign, Calendar, Shield, Building, Gamepad2, Menu } from 'lucide-react';
 import { FadeIn, FadeInUp, ScaleIn, BlurBlob } from '@/components/ui/Motion';
 import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
+import { Footer } from '@/components/ui/Footer';
+import { MobileNav, TradeMobileNav } from '@/components/ui/MobileNav';
+import { generateTradeMetadata, generateTradeViewport } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Electrician CRM - TradeSuite',
-  description: 'The CRM built specifically for electricians. Manage service calls, panel upgrades, inspections, and more.',
-  keywords: 'electrician CRM, electrical contractor software, electrical scheduling, service call tracking',
-};
+export const metadata: Metadata = generateTradeMetadata('electrician');
+export const viewport: Viewport = generateTradeViewport('electrician');
 
 const features = [
   { icon: Zap, title: 'Service Calls', description: 'Track emergency calls, scheduled maintenance, and installations.' },
@@ -45,7 +45,9 @@ export default function ElectricianPage() {
               <Briefcase className="w-8 h-8 text-amber-600" />
               <span className="font-bold text-2xl">TradeSuite</span>
             </Link>
-            <div className="flex items-center gap-4">
+            
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center gap-4">
               <Link href="/electrician/game" className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium shadow-md">
                 <Gamepad2 className="w-4 h-4" />
                 Play Simulator
@@ -55,6 +57,9 @@ export default function ElectricianPage() {
                 Start Free Trial
               </Link>
             </div>
+            
+            {/* Mobile Nav */}
+            <TradeMobileNav trade="electrician" tradeColor="amber" signupLink="/signup?trade=electrician" gameLink="/electrician/game" />
           </div>
         </div>
       </header>
@@ -235,17 +240,7 @@ export default function ElectricianPage() {
         </div>
       </section>
 
-      <footer className="py-12 bg-gray-900 text-gray-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <Briefcase className="w-6 h-6 text-amber-500" />
-              <span className="font-bold text-white">TradeSuite</span>
-            </Link>
-            <p className="text-sm">© {new Date().getFullYear()} TradeSuite. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer trade="electrician" tradeColor="amber" />
     </div>
   );
 }
