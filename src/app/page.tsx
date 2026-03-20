@@ -6,6 +6,8 @@ import { TestimonialCard, TrustBadges } from '@/components/ui/TestimonialCard';
 import { SocialProofSection, HomeTestimonials } from '@/components/ui/SocialProof';
 import { Footer } from '@/components/ui/Footer';
 import { MobileNav } from '@/components/ui/MobileNav';
+import { ROICalculator } from '@/components/ui/ROICalculator';
+import { DemoForm } from '@/components/ui/DemoForm';
 import { baseMetadata, viewport } from '@/lib/metadata';
 
 export const metadata: Metadata = baseMetadata;
@@ -124,30 +126,46 @@ export default function HomePage() {
         </nav>
       </header>
 
-      {/* Hero */}
+      {/* Hero with Demo Form */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24 relative">
-        <div className="text-center">
-          <FadeIn>
-            <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6 font-display">
-              The CRM Built for<span className="text-blue-600"> Your Trade</span>
-            </h1>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8">
-              Electricians. Plumbers. HVAC techs. Landscapers. Roofers.
-              <br />Stop using generic CRMs. Get software that speaks your language.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup" className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-bold text-lg shadow-lg shadow-blue-600/25 hover:shadow-xl hover:-translate-y-0.5">
-                Start Free Trial
-              </Link>
-              <a href="#features" className="px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-50 transition-all font-medium text-lg border border-gray-300 hover:border-gray-400">
-                See How It Works
-              </a>
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left - Hero Content */}
+          <div className="text-center lg:text-left">
+            <FadeIn>
+              <h1 className="font-bold text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6 font-display">
+                The CRM Built for<span className="text-blue-600"> Your Trade</span>
+              </h1>
+            </FadeIn>
+            <FadeIn delay={0.1}>
+              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto lg:mx-0 mb-8">
+                Electricians. Plumbers. HVAC techs. Landscapers. Roofers.
+                <br className="hidden md:block" />Stop using generic CRMs. Get software that speaks your language.
+              </p>
+            </FadeIn>
+            <FadeIn delay={0.2}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link href="/signup" className="px-8 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-bold text-lg shadow-lg shadow-blue-600/25 hover:shadow-xl hover:-translate-y-0.5">
+                  Start Free Trial
+                </Link>
+                <a href="#features" className="px-8 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-50 transition-all font-medium text-lg border border-gray-300 hover:border-gray-400">
+                  See How It Works
+                </a>
+              </div>
+              <p className="text-sm text-gray-500 mt-3">No credit card required • 14-day free trial</p>
+            </FadeIn>
+          </div>
+
+          {/* Right - Demo Form */}
+          <FadeIn delay={0.3}>
+            <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-full -translate-y-16 translate-x-16 opacity-50" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-100 rounded-full translate-y-12 -translate-x-12 opacity-50" />
+              <div className="relative">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 font-display">Get Your Free Demo</h3>
+                <p className="text-gray-600 mb-6">See how TradeSuite saves you 12+ hours per week.</p>
+                <DemoForm />
+              </div>
             </div>
-            <p className="text-sm text-gray-500 mt-3">No credit card required • 14-day free trial</p>
           </FadeIn>
         </div>
 
@@ -163,12 +181,12 @@ export default function HomePage() {
               <FadeIn key={trade.name} delay={0.4 + index * 0.1}>
                 <Link
                   href={trade.href}
-                  className={`px-6 py-4 rounded-xl border-2 border-gray-200 bg-white ${trade.hoverColor} transition-all group`}
+                  className={`px-6 py-4 rounded-xl border-2 border-gray-200 bg-white ${trade.hoverColor} transition-all group flex flex-col items-center`}
                 >
-                  <span className={`block mt-2 font-medium text-gray-700 group-hover:text-gray-900`}>
+                  <span className={`font-medium text-gray-700 group-hover:text-gray-900`}>
                     {trade.name}
                   </span>
-                  <div className={`mt-2 h-1 w-full rounded-full bg-gradient-to-r ${trade.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
+                  <div className={`mt-2 h-1 w-16 rounded-full bg-gradient-to-r ${trade.color} opacity-0 group-hover:opacity-100 transition-opacity`} />
                 </Link>
               </FadeIn>
             ))}
@@ -236,6 +254,9 @@ export default function HomePage() {
 
       {/* Testimonials */}
       <HomeTestimonials />
+
+      {/* ROI Calculator */}
+      <ROICalculator />
 
       {/* Pricing */}
       <section id="pricing" className="py-24 bg-white relative">
