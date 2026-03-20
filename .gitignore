@@ -30,3 +30,7 @@ next-env.d.ts
 .vercel
 .env.vercel
 .env.local.example
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
