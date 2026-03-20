@@ -337,7 +337,7 @@ function NotificationSection({
               <NotificationToggle
                 key={pref.id}
                 preference={pref}
-                onToggle={onToggle}
+                onToggle={() => onToggle(pref.id)}
                 categoryName={categoryNames[pref.category]}
               />
             ))}
