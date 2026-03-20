@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { plan, email, userId } = body;
+    const { plan, email, userId, referrer } = body;
 
     if (!plan || !['solo', 'team', 'business'].includes(plan)) {
       return NextResponse.json({ success: false, error: 'Invalid plan selected' }, { status: 400 });
@@ -37,8 +37,20 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tradesuite.vercel.app'}/signup/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tradesuite.vercel.app'}/signup?plan=${plan}`,
       customer_email: email,
-      metadata: { userId: userId || 'unknown', plan, source: 'tradesuite' },
-      subscription_data: { metadata: { userId: userId || 'unknown', plan, source: 'tradesuite' } },
+      metadata: { 
+        userId: userId || 'unknown', 
+        plan, 
+        source: 'tradesuite',
+        ...(referrer && { referrer }),
+      },
+      subscription_data: { 
+        metadata: { 
+          userId: userId || 'unknown', 
+          plan, 
+          source: 'tradesuite',
+          ...(referrer && { referrer }),
+        } 
+      },
     });
 
     return NextResponse.json({ success: true, checkoutUrl: session.url, sessionId: session.id });

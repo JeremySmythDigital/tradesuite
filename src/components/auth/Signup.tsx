@@ -14,6 +14,7 @@ export function Signup() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const planFromUrl = searchParams.get('plan') || 'solo';
+  const referrerCode = searchParams.get('ref');
   
   const [selectedPlan, setSelectedPlan] = useState<'solo' | 'team' | 'business'>(planFromUrl as 'solo' | 'team' | 'business');
   const [formData, setFormData] = useState({
@@ -26,6 +27,13 @@ export function Signup() {
   const [step, setStep] = useState<'account' | 'payment'>('account');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Store referral code in session for tracking
+  useEffect(() => {
+    if (referrerCode) {
+      sessionStorage.setItem('referralCode', referrerCode);
+    }
+  }, [referrerCode]);
 
   useEffect(() => {
     const plan = searchParams.get('plan');
@@ -88,6 +96,9 @@ export function Signup() {
     setLoading(true);
     setError('');
 
+    // Get referral code from session storage if it was stored earlier
+    const storedReferrer = sessionStorage.getItem('referralCode');
+
     try {
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -96,6 +107,7 @@ export function Signup() {
           plan: selectedPlan,
           email: formData.email,
           userId: formData.email,
+          referrer: storedReferrer || referrerCode || undefined,
         }),
       });
 
@@ -119,7 +131,7 @@ export function Signup() {
         <div className="flex justify-center">
           <Link href="/" className="flex items-center gap-2">
             <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2  0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             <span className="font-bold text-2xl">TradeSuite</span>
           </Link>
@@ -133,6 +145,11 @@ export function Signup() {
             Sign in
           </Link>
         </p>
+        {referrerCode && (
+          <p className="mt-2 text-center text-sm text-green-600">
+            🎉 You were referred! Sign up to get a special bonus.
+          </p>
+        )}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">

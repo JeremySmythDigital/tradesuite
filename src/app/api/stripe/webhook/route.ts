@@ -36,6 +36,36 @@ export async function POST(request: NextRequest) {
       // Extract metadata
       const plan = session.metadata?.plan || 'solo';
       const email = session.customer_email || session.metadata?.userId || 'unknown';
+      const referrerCode = session.metadata?.referrer || null;
+      
+      // Track referral if present
+      if (referrerCode) {
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus-production-1dd5.up.railway.app'}/items/referrals?filter[code][_eq]=${referrerCode}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+          })
+          .then(res => res.json())
+          .then(async (data) => {
+            if (data.data && data.data.length > 0) {
+              const referrer = data.data[0];
+              // Increment referral count
+              await fetch(`${process.env.NEXT_PUBLIC_DIRECTUS_URL || 'https://directus-production-1dd5.up.railway.app'}/items/referrals/${referrer.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  referrals: (referrer.referrals || 0) + 1,
+                  credits: (referrer.credits || 0) + 10, // $10 credit per referral
+                }),
+              });
+              console.log(`Referral tracked: ${referrerCode} -> ${email}`);
+            }
+          });
+        } catch (refErr) {
+          console.error('Referral tracking failed:', refErr);
+          // Don't fail the checkout for referral errors
+        }
+      }
       
       // TODO: Create Directus subscription record
       // For now, log the successful payment
