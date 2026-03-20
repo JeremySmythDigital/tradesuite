@@ -1,11 +1,6 @@
 /// <reference types="vitest" />
 import { vi } from 'vitest';
 import React from 'react';
-import * as matchers from '@testing-library/jest-dom/matchers';
-import { expect } from 'vitest';
-
-// Add jest-dom matchers to vitest
-expect.extend(matchers);
 
 // Mock Next.js modules
 vi.mock('next/navigation', () => ({
@@ -28,13 +23,23 @@ vi.mock('next/link', () => ({
     React.createElement('a', { href }, children),
 }));
 
-// Mock Framer Motion completely
+vi.mock('next/image', () => ({
+  default: ({ src, alt, width, height }: { src: string; alt: string; width?: number; height?: number }) => 
+    React.createElement('img', { src, alt, width, height }),
+}));
+
+vi.mock('next/font/google', () => ({
+  Plus_Jakarta_Sans: () => ({ variable: '--font-plus-jakarta' }),
+  Space_Grotesk: () => ({ variable: '--font-space-grotesk' }),
+}));
+
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => React.createElement('div', props, children),
     section: ({ children, ...props }: any) => React.createElement('section', props, children),
     span: ({ children, ...props }: any) => React.createElement('span', props, children),
     button: ({ children, ...props }: any) => React.createElement('button', props, children),
+    p: ({ children, ...props }: any) => React.createElement('p', props, children),
   },
   AnimatePresence: ({ children }: any) => children,
   useInView: vi.fn(() => [React.createRef(), true]),
@@ -43,10 +48,9 @@ vi.mock('framer-motion', () => ({
   useTransform: vi.fn(() => 0),
 }));
 
-// Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -58,7 +62,6 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock ResizeObserver
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   unobserve: vi.fn(),

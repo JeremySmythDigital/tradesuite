@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { tradeTemplates, getTradeTemplate, type LineItemPreset } from '@/lib/trade-templates';
 
 interface Estimate {
   id: string;
@@ -44,8 +45,12 @@ export default function EstimatesPage() {
     valid_until: '',
     description: '',
     notes: '',
-    items: [{ description: '', quantity: '1', rate: '' }]
+    items: [{ description: '', quantity: '1', rate: '' }],
+    trade: '' // Trade type for presets
   });
+  
+  const [selectedTrade, setSelectedTrade] = useState<string>('');
+  const [showPresets, setShowPresets] = useState(false);
 
   const DIRECTUS_URL = 'https://directus-production-1dd5.up.railway.app';
 
@@ -202,7 +207,8 @@ export default function EstimatesPage() {
           description: item.description,
           quantity: String(item.quantity),
           rate: String(item.rate)
-        }))
+        })),
+        trade: ''
       });
     } else {
       setEditingEstimate(null);
@@ -211,7 +217,8 @@ export default function EstimatesPage() {
         valid_until: '',
         description: '',
         notes: '',
-        items: [{ description: '', quantity: '1', rate: '' }]
+        items: [{ description: '', quantity: '1', rate: '' }],
+        trade: ''
       });
     }
     setShowModal(true);
@@ -220,12 +227,14 @@ export default function EstimatesPage() {
   const closeModal = () => {
     setShowModal(false);
     setEditingEstimate(null);
+    setSelectedTrade('');
     setFormData({
       client_id: '',
       valid_until: '',
       description: '',
       notes: '',
-      items: [{ description: '', quantity: '1', rate: '' }]
+      items: [{ description: '', quantity: '1', rate: '' }],
+      trade: ''
     });
   };
 
@@ -252,6 +261,27 @@ export default function EstimatesPage() {
         i === index ? { ...item, [field]: value } : item
       )
     }));
+  };
+
+  // Add preset line item from trade template
+  const addPresetItem = (preset: LineItemPreset) => {
+    const avgPrice = (preset.suggestedPrice.min + preset.suggestedPrice.max) / 2;
+    setFormData(prev => ({
+      ...prev,
+      items: [...prev.items, {
+        description: preset.description,
+        quantity: '1',
+        rate: avgPrice.toFixed(2)
+      }]
+    }));
+    setShowPresets(false);
+  };
+
+  // Get available presets for selected trade
+  const getAvailablePresets = (): LineItemPreset[] => {
+    if (!selectedTrade) return [];
+    const template = getTradeTemplate(selectedTrade);
+    return template?.lineItems || [];
   };
 
   const getStatusColor = (status: string) => {
