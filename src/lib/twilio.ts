@@ -128,7 +128,8 @@ export class TwilioService {
     data: Record<string, string>,
     to: string
   ): Promise<SMSResponse> {
-    const body = SMS_TEMPLATES[template](data as Parameters<typeof SMS_TEMPLATES[typeof template]>[0]);
+    const templateFn = SMS_TEMPLATES[template];
+    const body = (templateFn as (data: Record<string, string>) => string)(data);
     return this.sendMessage({ to, body });
   }
   
