@@ -9,6 +9,7 @@ import { MobileNav } from '@/components/ui/MobileNav';
 import { ROICalculator } from '@/components/ui/ROICalculator';
 import { DemoForm } from '@/components/ui/DemoForm';
 import { LiveChatWidget } from '@/components/ui/LiveChatWidget';
+import { TrustBadges } from '@/components/ui/TrustBadges';
 import { baseMetadata, viewport } from '@/lib/metadata';
 
 export const metadata: Metadata = baseMetadata;
@@ -313,6 +314,13 @@ export default function HomePage() {
               </ScaleIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Trust Badges */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TrustBadges variant="full" />
         </div>
       </section>
 
