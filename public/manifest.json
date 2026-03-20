@@ -1,0 +1,38 @@
+{
+  "name": "TradeSuite - CRM for Trades",
+  "short_name": "TradeSuite",
+  "description": "The CRM built for electricians, plumbers, HVAC techs, landscapers, and roofers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    { 
+      "name": "New Job", 
+      "short_name": "New Job", 
+      "url": "/jobs?new=true", 
+      "icons": [{ "src": "/icon-new-job.png", "sizes": "96x96" }] 
+    },
+    { 
+      "name": "Dispatch Board", 
+      "short_name": "Dispatch", 
+      "url": "/dispatch", 
+      "icons": [{ "src": "/icon-dispatch.png", "sizes": "96x96" }] 
+    },
+    { 
+      "name": "Clients", 
+      "short_name": "Clients", 
+      "url": "/clients", 
+      "icons": [{ "src": "/icon-clients.png", "sizes": "96x96" }] 
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

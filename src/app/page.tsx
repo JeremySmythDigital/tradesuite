@@ -8,6 +8,7 @@ import { Footer } from '@/components/ui/Footer';
 import { MobileNav } from '@/components/ui/MobileNav';
 import { ROICalculator } from '@/components/ui/ROICalculator';
 import { DemoForm } from '@/components/ui/DemoForm';
+import { LiveChatWidget } from '@/components/ui/LiveChatWidget';
 import { baseMetadata, viewport } from '@/lib/metadata';
 
 export const metadata: Metadata = baseMetadata;
@@ -346,6 +347,9 @@ export default function HomePage() {
 
       {/* Footer */}
       <Footer />
+      
+      {/* Live Chat Widget */}
+      <LiveChatWidget company="TradeSuite" primaryColor="#2563eb" />
     </div>
   );
 }
