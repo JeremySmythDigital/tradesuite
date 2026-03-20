@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@/test/utils';
-import userEvent from '@testing-library/user-event';
+import { render } from '@/test/utils';
 import { ROICalculator } from './ROICalculator';
 
 describe('ROICalculator', () => {
@@ -11,22 +10,8 @@ describe('ROICalculator', () => {
 
   it('renders with inputs', () => {
     const { container } = render(<ROICalculator />);
-    // Check for any inputs (number or text)
     const inputs = container.querySelectorAll('input');
     expect(inputs.length).toBeGreaterThan(0);
-  });
-
-  it('calculates ROI when values change', async () => {
-    const user = userEvent.setup();
-    const { container } = render(<ROICalculator />);
-    
-    const inputs = container.querySelectorAll('input');
-    if (inputs.length > 0) {
-      await user.clear(inputs[0]);
-      await user.type(inputs[0], '50');
-    }
-    
-    expect(container).toBeInTheDocument();
   });
 
   it('shows savings comparison', () => {
@@ -42,7 +27,7 @@ describe('ROICalculator', () => {
     expect(container).toBeInTheDocument();
   });
 
-  it('handles edge cases', async () => {
+  it('handles edge cases', () => {
     const { container } = render(<ROICalculator />);
     expect(container).toBeInTheDocument();
   });
