@@ -4,8 +4,8 @@ import { Briefcase } from 'lucide-react';
 import { Footer } from '@/components/ui/Footer';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - TradeSuite',
-  description: 'TradeSuite privacy policy and data handling practices.',
+  title: 'Privacy Policy - Cypress Signal',
+  description: 'Cypress Signal privacy policy and data handling practices.',
 };
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Briefcase className="w-8 h-8 text-blue-600" />
-            <span className="font-bold text-2xl">TradeSuite</span>
+            <span className="font-bold text-2xl">Cypress Signal</span>
           </Link>
         </nav>
       </header>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
           <h2>7. Contact</h2>
           <p>For privacy-related questions, contact us at:</p>
           <ul>
-            <li>Email: privacy@tradesuite.app</li>
+            <li>Email: privacy@cypress-signal.app</li>
             <li>Phone: (916) 555-0100</li>
           </ul>
         </div>

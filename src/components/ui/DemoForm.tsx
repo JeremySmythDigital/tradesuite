@@ -82,7 +82,7 @@ export function DemoForm({ trade, variant = 'hero' }: DemoFormProps) {
     <FadeIn>
       <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 max-w-md">
         <h3 className="text-xl font-bold text-gray-900 mb-2">Get Your Free Demo</h3>
-        <p className="text-gray-600 mb-6">See how TradeSuite can save you 12+ hours per week.</p>
+        <p className="text-gray-600 mb-6">See how Cypress Signal can save you 12+ hours per week.</p>
         
         <div className="space-y-4">
           <div>

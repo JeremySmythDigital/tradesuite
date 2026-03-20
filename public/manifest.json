@@ -1,6 +1,6 @@
 {
-  "name": "TradeSuite - CRM for Trades",
-  "short_name": "TradeSuite",
+  "name": "Cypress Signal - Trade Business CRM",
+  "short_name": "Cypress Signal",
   "description": "The CRM built for electricians, plumbers, HVAC techs, landscapers, and roofers",
   "start_url": "/",
   "display": "standalone",

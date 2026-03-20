@@ -3,37 +3,37 @@ import { Metadata, Viewport } from 'next';
 // Base metadata for the site
 export const baseMetadata: Metadata = {
   title: {
-    default: 'TradeSuite - The CRM Built for Your Trade',
-    template: '%s | TradeSuite',
+    default: 'Cypress Signal - The CRM Built for Your Trade',
+    template: '%s | Cypress Signal',
   },
   description: 'Trade-specific CRM for electricians, plumbers, HVAC, landscapers, and roofers. Manage clients, jobs, estimates, invoices, and scheduling.',
   keywords: ['electrician CRM', 'plumber software', 'HVAC scheduling', 'landscaper management', 'roofing estimates', 'trade CRM', 'contractor software'],
-  authors: [{ name: 'TradeSuite' }],
-  creator: 'TradeSuite',
-  publisher: 'TradeSuite',
+  authors: [{ name: 'Cypress Signal' }],
+  creator: 'Cypress Signal',
+  publisher: 'Cypress Signal',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://tradesuite.com'),
+  metadataBase: new URL('https://cypress-signal.com'),
   openGraph: {
-    title: 'TradeSuite - The CRM Built for Your Trade',
+    title: 'Cypress Signal - The CRM Built for Your Trade',
     description: 'Trade-specific CRM for electricians, plumbers, HVAC, landscapers, and roofers. Stop using generic CRMs.',
-    url: 'https://tradesuite.com',
-    siteName: 'TradeSuite',
+    url: 'https://cypress-signal.com',
+    siteName: 'Cypress Signal',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'TradeSuite - Trade-Specific CRM',
+        alt: 'Cypress Signal - Trade-Specific CRM',
       },
       {
         url: '/og-image-square.png',
         width: 600,
         height: 600,
-        alt: 'TradeSuite Logo',
+        alt: 'Cypress Signal Logo',
       },
     ],
     locale: 'en_US',
@@ -41,10 +41,10 @@ export const baseMetadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TradeSuite - The CRM Built for Your Trade',
+    title: 'Cypress Signal - The CRM Built for Your Trade',
     description: 'Trade-specific CRM for electricians, plumbers, HVAC, landscapers, and roofers.',
     images: ['/og-image.png'],
-    creator: '@tradesuite',
+    creator: '@cypress-signal',
   },
   robots: {
     index: true,
@@ -72,7 +72,7 @@ export const baseMetadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   alternates: {
-    canonical: 'https://tradesuite.com',
+    canonical: 'https://cypress-signal.com',
   },
 };
 

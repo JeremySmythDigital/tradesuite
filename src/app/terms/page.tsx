@@ -4,8 +4,8 @@ import { Briefcase } from 'lucide-react';
 import { Footer } from '@/components/ui/Footer';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service - TradeSuite',
-  description: 'TradeSuite terms of service and user agreement.',
+  title: 'Terms of Service - Cypress Signal',
+  description: 'Cypress Signal terms of service and user agreement.',
 };
 
 export default function TermsPage() {
@@ -15,7 +15,7 @@ export default function TermsPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Briefcase className="w-8 h-8 text-blue-600" />
-            <span className="font-bold text-2xl">TradeSuite</span>
+            <span className="font-bold text-2xl">Cypress Signal</span>
           </Link>
         </nav>
       </header>
@@ -26,10 +26,10 @@ export default function TermsPage() {
 
         <div className="prose prose-blue max-w-none">
           <h2>1. Agreement to Terms</h2>
-          <p>By using TradeSuite, you agree to these terms. If you disagree with any part, you may not access our service.</p>
+          <p>By using Cypress Signal, you agree to these terms. If you disagree with any part, you may not access our service.</p>
 
           <h2>2. Description of Service</h2>
-          <p>TradeSuite provides CRM and business management software for trade professionals, including:</p>
+          <p>Cypress Signal provides CRM and business management software for trade professionals, including:</p>
           <ul>
             <li>Client and job management</li>
             <li>Estimates and invoices</li>
@@ -72,10 +72,10 @@ export default function TermsPage() {
           </ul>
 
           <h2>7. Intellectual Property</h2>
-          <p>All TradeSuite content, features, and functionality are owned by TradeSuite and protected by intellectual property laws.</p>
+          <p>All Cypress Signal content, features, and functionality are owned by Cypress Signal and protected by intellectual property laws.</p>
 
           <h2>8. Limitation of Liability</h2>
-          <p>TradeSuite is provided "as is." We are not liable for indirect, incidental, or consequential damages.</p>
+          <p>Cypress Signal is provided "as is." We are not liable for indirect, incidental, or consequential damages.</p>
 
           <h2>9. Termination</h2>
           <p>We may terminate your account for violation of these terms. You may terminate at any time.</p>
@@ -83,7 +83,7 @@ export default function TermsPage() {
           <h2>10. Contact</h2>
           <p>Questions? Contact us:</p>
           <ul>
-            <li>Email: legal@tradesuite.app</li>
+            <li>Email: legal@cypress-signal.app</li>
             <li>Phone: (916) 555-0100</li>
           </ul>
         </div>

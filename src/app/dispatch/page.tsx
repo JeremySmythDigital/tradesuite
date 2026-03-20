@@ -81,7 +81,7 @@ export default function DispatchBoard() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Wrench className="w-8 h-8 text-blue-600" />
-              <span className="font-bold text-2xl">TradeSuite</span>
+              <span className="font-bold text-2xl">Cypress Signal</span>
             </Link>
             <div className="flex items-center gap-4">
               <nav className="hidden md:flex items-center gap-6">

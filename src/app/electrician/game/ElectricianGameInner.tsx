@@ -18,7 +18,7 @@ interface Job {
   createdAt: number;
 }
 
-type GamePhase = 'intro' | 'chaos' | 'transition' | 'tradesuite' | 'results';
+type GamePhase = 'intro' | 'chaos' | 'transition' | 'cypress-signal' | 'results';
 
 const JOB_TYPES: Record<string, { label: string; basePrice: number }> = {
   service_call: { label: 'Service Call', basePrice: 189 },
@@ -84,8 +84,8 @@ export default function ElectricianGameInner() {
   const [chaosLost, setChaosLost] = useState(0);
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [chaosActionsLeft, setChaosActionsLeft] = useState(3);
-  const [tradesuiteJobs, setTradesuiteJobs] = useState<Job[]>([]);
-  const [tradesuiteRevenue, setTradesuiteRevenue] = useState(0);
+  const [cypressSignalJobs, setTradesuiteJobs] = useState<Job[]>([]);
+  const [cypressSignalRevenue, setTradesuiteRevenue] = useState(0);
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [message, setMessage] = useState('');
   const [showSummary, setShowSummary] = useState(false);
@@ -95,10 +95,10 @@ export default function ElectricianGameInner() {
       setChaosJobs(generateJobs(6));
       setChaosActionsLeft(3);
     }
-    if (phase === 'tradesuite' && tradesuiteJobs.length === 0) {
+    if (phase === 'cypress-signal' && cypressSignalJobs.length === 0) {
       setTradesuiteJobs(generateJobs(6));
     }
-  }, [phase, chaosJobs.length, tradesuiteJobs.length]);
+  }, [phase, chaosJobs.length, cypressSignalJobs.length]);
 
   // Game component continues - shortened for memory
   // Full implementation remains in production

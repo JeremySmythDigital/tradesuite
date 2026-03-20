@@ -58,7 +58,7 @@ export function VideoTestimonials({ testimonials, tradeFilter }: VideoTestimonia
               See What Our Customers Say
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Real stories from real trade professionals who transformed their business with TradeSuite.
+              Real stories from real trade professionals who transformed their business with Cypress Signal.
             </p>
           </div>
         </FadeIn>

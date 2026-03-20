@@ -34,7 +34,7 @@ export function AppNav({ user, currentPath }: AppNavProps) {
           <div className="flex items-center gap-8">
             <Link href="/dashboard" className="flex items-center gap-2">
               <Briefcase className="w-8 h-8 text-blue-600" />
-              <span className="font-bold text-xl text-gray-900">TradeSuite</span>
+              <span className="font-bold text-xl text-gray-900">Cypress Signal</span>
             </Link>
             
             {/* Desktop Nav */}

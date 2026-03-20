@@ -52,7 +52,7 @@ export function trackConversion(conversionName: string, value?: number, currency
   }
 }
 
-// Predefined conversion events for TradeSuite
+// Predefined conversion events for Cypress Signal
 export const conversions = {
   // Sign up conversions
   signupStarted: () => trackEvent('sign_up_started', 'engagement', 'signup'),

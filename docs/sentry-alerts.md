@@ -1,6 +1,6 @@
 # Sentry Error Alerts Setup
 
-This document describes how to configure Sentry error alerts to Slack/Discord for TradeSuite.
+This document describes how to configure Sentry error alerts to Slack/Discord for Cypress Signal.
 
 ## Prerequisites
 
@@ -14,15 +14,15 @@ This document describes how to configure Sentry error alerts to Slack/Discord fo
 
 1. Go to https://api.slack.com/apps
 2. Click "Create New App" → "From scratch"
-3. Name it "TradeSuite Alerts" and select your workspace
+3. Name it "Cypress Signal Alerts" and select your workspace
 4. Go to "Incoming Webhooks" and enable it
 5. Click "Add New Webhook to Workspace"
-6. Select the channel for alerts (e.g., `#tradesuite-alerts`)
+6. Select the channel for alerts (e.g., `#cypress-signal-alerts`)
 7. Copy the webhook URL (looks like: `https://hooks.slack.com/services/T.../B.../...`)
 
 ### Step 2: Configure Sentry Slack Integration
 
-1. Go to your Sentry project: https://sentry.io/settings/projects/tradesuite/
+1. Go to your Sentry project: https://sentry.io/settings/projects/cypress-signal/
 2. Navigate to **Integrations** → **Slack**
 3. Click "Configure"
 4. Select the Slack workspace and authorize
@@ -43,7 +43,7 @@ conditions:
   - tags.level: critical
 actions:
   - notify: slack
-    channel: "#tradesuite-alerts"
+    channel: "#cypress-signal-alerts"
     include: [issue_link, stacktrace, request_url]
 
 # Rule 2: High Issue Frequency
@@ -52,7 +52,7 @@ conditions:
   - issue_frequency: > 10 in 5 minutes
 actions:
   - notify: slack
-    channel: "#tradesuite-alerts"
+    channel: "#cypress-signal-alerts"
     priority: high
 
 # Rule 3: New Release Monitoring
@@ -62,7 +62,7 @@ conditions:
   - new_issues: > 5 in 1 hour
 actions:
   - notify: slack
-    channel: "#tradesuite-releases"
+    channel: "#cypress-signal-releases"
 ```
 
 ## Discord Integration
@@ -72,7 +72,7 @@ actions:
 1. Go to your Discord server settings
 2. Navigate to **Integrations** → **Webhooks**
 3. Click "New Webhook"
-4. Name it "TradeSuite Alerts" and select the channel
+4. Name it "Cypress Signal Alerts" and select the channel
 5. Copy the webhook URL (looks like: `https://discord.com/api/webhooks/...`)
 
 ### Step 2: Configure Sentry Discord Integration
@@ -134,7 +134,7 @@ Add these to your production environment:
 # Sentry
 NEXT_PUBLIC_SENTRY_DSN=https://xxx@sentry.io/xxx
 SENTRY_ORG=your-org
-SENTRY_PROJECT=tradesuite
+SENTRY_PROJECT=cypress-signal
 
 # Slack (optional - for custom webhook patterns)
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T.../B.../...
@@ -149,14 +149,14 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
 
 1. Go to Sentry Settings → Integrations → Slack
 2. Click "Test Integration"
-3. You should see a test message in `#tradesuite-alerts`
+3. You should see a test message in `#cypress-signal-alerts`
 
 ### Test Discord Alert
 
 ```bash
 curl -X POST $DISCORD_WEBHOOK_URL \
   -H "Content-Type: application/json" \
-  -d '{"content": "Test alert from TradeSuite"}'
+  -d '{"content": "Test alert from Cypress Signal"}'
 ```
 
 ## Alert Frequency Settings
@@ -192,7 +192,7 @@ Customize the Slack message format:
       "type": "header",
       "text": {
         "type": "plain_text",
-        "text": "🚨 TradeSuite Error Alert"
+        "text": "🚨 Cypress Signal Error Alert"
       }
     },
     {
@@ -219,7 +219,7 @@ Customize the Slack message format:
 
 Create a Slack dashboard for real-time monitoring:
 
-1. Create channel `#tradesuite-monitoring`
+1. Create channel `#cypress-signal-monitoring`
 2. Configure Sentry to post:
    - Daily summary at 9 AM: errors, warnings, performance
    - Weekly summary on Monday: trends, unique errors

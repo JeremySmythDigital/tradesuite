@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://tradesuite.com';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cypress-signal.com';
 
 // Trade-specific landing pages
 const trades = ['electrician', 'plumber', 'hvac', 'landscaper', 'roofer'] as const;

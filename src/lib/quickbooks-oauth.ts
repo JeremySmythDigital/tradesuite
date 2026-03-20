@@ -1,7 +1,7 @@
 // QuickBooks OAuth configuration
 const QUICKBOOKS_CLIENT_ID = process.env.QUICKBOOKS_CLIENT_ID;
 const QUICKBOOKS_CLIENT_SECRET = process.env.QUICKBOOKS_CLIENT_SECRET;
-const QUICKBOOKS_REDIRECT_URI = process.env.QUICKBOOKS_REDIRECT_URI || 'https://tradesuite.vercel.app/api/quickbooks/callback';
+const QUICKBOOKS_REDIRECT_URI = process.env.QUICKBOOKS_REDIRECT_URI || 'https://cypress-signal.vercel.app/api/quickbooks/callback';
 
 interface QuickBooksToken {
   access_token: string;

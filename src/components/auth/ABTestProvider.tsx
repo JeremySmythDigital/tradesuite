@@ -27,7 +27,7 @@ export const AB_TESTS: Record<string, ABTestConfig> = {
     variants: {
       'Start Free Trial': 0.4,
       'Get Started Free': 0.3,
-      'Try TradeSuite Free': 0.3,
+      'Try Cypress Signal Free': 0.3,
     },
     defaultValue: 'Start Free Trial',
   },

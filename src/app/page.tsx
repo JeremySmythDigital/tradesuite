@@ -8,7 +8,6 @@ import { Footer } from '@/components/ui/Footer';
 import { MobileNav } from '@/components/ui/MobileNav';
 import { ROICalculator } from '@/components/ui/ROICalculator';
 import { DemoForm } from '@/components/ui/DemoForm';
-import { LiveChatWidget } from '@/components/ui/LiveChatWidget';
 import { TrustBadges } from '@/components/ui/TrustBadges';
 import { baseMetadata, viewport } from '@/lib/metadata';
 
@@ -109,7 +108,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Briefcase className="w-8 h-8 text-blue-600" />
-              <span className="font-bold text-2xl">TradeSuite</span>
+              <span className="font-bold text-2xl">Cypress Signal</span>
             </Link>
             
             {/* Desktop Nav */}
@@ -164,7 +163,7 @@ export default function HomePage() {
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-100 rounded-full translate-y-12 -translate-x-12 opacity-50" />
               <div className="relative">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2 font-display">Get Your Free Demo</h3>
-                <p className="text-gray-600 mb-6">See how TradeSuite saves you 12+ hours per week.</p>
+                <p className="text-gray-600 mb-6">See how Cypress Signal saves you 12+ hours per week.</p>
                 <DemoForm />
               </div>
             </div>
@@ -357,7 +356,6 @@ export default function HomePage() {
       <Footer />
       
       {/* Live Chat Widget */}
-      <LiveChatWidget company="TradeSuite" primaryColor="#2563eb" />
     </div>
   );
 }

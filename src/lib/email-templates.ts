@@ -417,7 +417,7 @@ export async function sendEmail(to: string, template: EmailTemplate): Promise<{ 
       },
       body: JSON.stringify({
         personalizations: [{ to: [{ email: to }] }],
-        from: { email: process.env.EMAIL_FROM || 'noreply@tradesuite.app' },
+        from: { email: process.env.EMAIL_FROM || 'noreply@cypress-signal.app' },
         subject: template.subject,
         content: [
           { type: 'text/plain', value: template.text },

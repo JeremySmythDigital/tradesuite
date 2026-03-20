@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Briefcase, Users, FileText, DollarSign, Plus, ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - TradeSuite',
+  title: 'Dashboard - Cypress Signal',
   description: 'Manage your trade business',
 };
 
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Briefcase className="w-8 h-8 text-blue-600" />
-              <span className="font-bold text-2xl">TradeSuite</span>
+              <span className="font-bold text-2xl">Cypress Signal</span>
             </Link>
             <div className="flex items-center gap-4">
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">

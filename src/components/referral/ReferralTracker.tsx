@@ -27,7 +27,7 @@ export function ReferralTracker({ email }: { email: string }) {
     }
   }, [email]);
   
-  const referralUrl = referral ? `https://tradesuite.vercel.app/signup?ref=${referral.code}` : '';
+  const referralUrl = referral ? `https://cypress-signal.vercel.app/signup?ref=${referral.code}` : '';
   
   const copyToClipboard = () => {
     navigator.clipboard.writeText(referralUrl);
@@ -38,8 +38,8 @@ export function ReferralTracker({ email }: { email: string }) {
   const shareLink = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'TradeSuite - Trade-specific CRM',
-        text: 'Check out TradeSuite - the CRM built for trades. Use my referral link for a discount!',
+        title: 'Cypress Signal - Trade-specific CRM',
+        text: 'Check out Cypress Signal - the CRM built for trades. Use my referral link for a discount!',
         url: referralUrl,
       });
     } else {

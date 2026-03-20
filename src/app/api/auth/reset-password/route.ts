@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
     
     // In production, send email via SendGrid/Postmark
-    const resetUrl = `${process.env.NEXT_PUBLIC_URL || 'https://tradesuite.vercel.app'}/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.NEXT_PUBLIC_URL || 'https://cypress-signal.vercel.app'}/reset-password?token=${resetToken}`;
     console.log(`[EMAIL] Password reset for ${email}: ${resetUrl}`);
     
     // Always return success to prevent email enumeration

@@ -38,7 +38,7 @@ export default function ElectricianPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Briefcase className="w-8 h-8 text-amber-600" />
-              <span className="font-bold text-2xl">TradeSuite</span>
+              <span className="font-bold text-2xl">Cypress Signal</span>
             </Link>
             
             {/* Desktop Nav */}
@@ -136,7 +136,7 @@ export default function ElectricianPage() {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <FadeIn delay={0.2}>
               <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-                <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without TradeSuite</h3>
+                <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without Cypress Signal</h3>
                 <ul className="space-y-2 text-red-700">
                   <li className="flex items-start gap-2"><span className="text-red-500">•</span>Emergency calls lost in text threads</li>
                   <li className="flex items-start gap-2"><span className="text-red-500">•</span>Client info scattered across apps</li>
@@ -149,7 +149,7 @@ export default function ElectricianPage() {
             
             <FadeIn delay={0.3}>
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                <h3 className="font-bold text-green-800 text-lg mb-4">✓ With TradeSuite</h3>
+                <h3 className="font-bold text-green-800 text-lg mb-4">✓ With Cypress Signal</h3>
                 <ul className="space-y-2 text-green-700">
                   <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Emergency calls highlighted instantly</li>
                   <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All client info in one dashboard</li>
@@ -225,7 +225,7 @@ export default function ElectricianPage() {
             <h2 className="font-bold text-4xl text-white mb-6 font-display">Ready to Power Up Your Business?</h2>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <p className="text-amber-100 text-xl mb-8">Learn how TradeSuite can help your electrical business with TradeSuite.</p>
+            <p className="text-amber-100 text-xl mb-8">Learn how Cypress Signal can help your electrical business with Cypress Signal.</p>
           </FadeIn>
           <FadeIn delay={0.2}>
             <Link href="/signup?trade=electrician" className="inline-block px-8 py-4 bg-white text-amber-700 rounded-xl hover:bg-amber-50 transition-all font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5">

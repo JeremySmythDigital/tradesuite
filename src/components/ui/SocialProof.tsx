@@ -32,7 +32,7 @@ export function SocialProofSection() {
             Trusted by Trade Professionals
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            From solo operators to growing crews, thousands of trades have streamlined their business with TradeSuite.
+            From solo operators to growing crews, thousands of trades have streamlined their business with Cypress Signal.
           </p>
         </motion.div>
 
@@ -116,7 +116,7 @@ export function HomeTestimonials() {
             What Trade Pros Say
           </h2>
           <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Real stories from real trades. See how TradeSuite helps them close more jobs and get paid faster.
+            Real stories from real trades. See how Cypress Signal helps them close more jobs and get paid faster.
           </p>
         </motion.div>
 

@@ -6,8 +6,8 @@ import { TrustBadges } from '@/components/ui/TrustBadges';
 import { Footer } from '@/components/ui/Footer';
 
 export const metadata: Metadata = {
-  title: 'About TradeSuite - The CRM Built for Trades',
-  description: 'Learn about TradeSuite and our mission to help trade professionals succeed.',
+  title: 'About Cypress Signal - The CRM Built for Trades',
+  description: 'Learn about Cypress Signal and our mission to help trade professionals succeed.',
 };
 
 const team = [
@@ -31,7 +31,7 @@ export default function AboutPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Briefcase className="w-8 h-8 text-blue-600" />
-            <span className="font-bold text-2xl">TradeSuite</span>
+            <span className="font-bold text-2xl">Cypress Signal</span>
           </Link>
         </nav>
       </header>
@@ -47,7 +47,7 @@ export default function AboutPage() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              We started TradeSuite because we were tired of generic CRMs that didn't understand 
+              We started Cypress Signal because we were tired of generic CRMs that didn't understand 
               what it's like to run a trade business.
             </p>
           </FadeIn>
@@ -66,13 +66,13 @@ export default function AboutPage() {
               </FadeIn>
               <FadeIn delay={0.1}>
                 <p className="text-lg text-gray-600 mb-4">
-                  TradeSuite exists to help tradespeople succeed. We know the challenges - 
+                  Cypress Signal exists to help tradespeople succeed. We know the challenges - 
                   juggling jobs, customers, estimates, invoices, and still trying to grow your business.
                 </p>
               </FadeIn>
               <FadeIn delay={0.2}>
                 <p className="text-lg text-gray-600 mb-4">
-                  Our founder spent 10 years as an electrician before building TradeSuite. 
+                  Our founder spent 10 years as an electrician before building Cypress Signal. 
                   Every feature is designed with real-world trade experience in mind.
                 </p>
               </FadeIn>

@@ -38,7 +38,7 @@ export default function LandscaperPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Briefcase className="w-8 h-8 text-green-600" />
-              <span className="font-bold text-2xl">TradeSuite</span>
+              <span className="font-bold text-2xl">Cypress Signal</span>
             </Link>
             
             {/* Desktop Nav */}
@@ -136,7 +136,7 @@ export default function LandscaperPage() {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <FadeIn delay={0.2}>
               <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-                <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without TradeSuite</h3>
+                <h3 className="font-bold text-red-800 text-lg mb-4">❌ Without Cypress Signal</h3>
                 <ul className="space-y-2 text-red-700">
                   <li className="flex items-start gap-2"><span className="text-red-500">•</span>Routes scribbled on paper</li>
                   <li className="flex items-start gap-2"><span className="text-red-500">•</span>Customer info scattered across apps</li>
@@ -149,7 +149,7 @@ export default function LandscaperPage() {
             
             <FadeIn delay={0.3}>
               <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-                <h3 className="font-bold text-green-800 text-lg mb-4">✓ With TradeSuite</h3>
+                <h3 className="font-bold text-green-800 text-lg mb-4">✓ With Cypress Signal</h3>
                 <ul className="space-y-2 text-green-700">
                   <li className="flex items-start gap-2"><span className="text-green-500">✓</span>Optimized routes with GPS tracking</li>
                   <li className="flex items-start gap-2"><span className="text-green-500">✓</span>All customer info in one dashboard</li>
@@ -228,7 +228,7 @@ export default function LandscaperPage() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <p className="text-green-100 text-xl mb-8">
-              Join thousands of landscapers who trust TradeSuite to manage their business.
+              Join thousands of landscapers who trust Cypress Signal to manage their business.
             </p>
           </FadeIn>
           <FadeIn delay={0.2}>

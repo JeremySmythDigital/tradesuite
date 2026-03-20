@@ -95,15 +95,15 @@ export interface BreadcrumbSchema {
   }>;
 }
 
-// TradeSuite Organization Schema
+// Cypress Signal Organization Schema
 export function getOrganizationSchema(): OrganizationSchema {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'TradeSuite',
+    name: 'Cypress Signal',
     description: 'Trade-specific CRM software for electricians, plumbers, HVAC contractors, landscapers, and roofers. Manage clients, jobs, estimates, invoices, and scheduling.',
-    url: 'https://tradesuite.com',
-    logo: 'https://tradesuite.com/logo.png',
+    url: 'https://cypress-signal.com',
+    logo: 'https://cypress-signal.com/logo.png',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+1-800-555-0123',
@@ -112,9 +112,9 @@ export function getOrganizationSchema(): OrganizationSchema {
       availableLanguage: ['English'],
     },
     sameAs: [
-      'https://twitter.com/tradesuite',
-      'https://www.linkedin.com/company/tradesuite',
-      'https://www.facebook.com/tradesuite',
+      'https://twitter.com/cypress-signal',
+      'https://www.linkedin.com/company/cypress-signal',
+      'https://www.facebook.com/cypress-signal',
     ],
     address: {
       '@type': 'PostalAddress',
@@ -130,7 +130,7 @@ export function getSoftwareSchema(): SoftwareApplicationSchema {
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'TradeSuite',
+    name: 'Cypress Signal',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     offers: {
@@ -150,23 +150,23 @@ export function getSoftwareSchema(): SoftwareApplicationSchema {
 export function getTradeSchema(trade: string): LocalBusinessSchema & { softwareApp: SoftwareApplicationSchema } {
   const tradeData: Record<string, { name: string; description: string }> = {
     electrician: {
-      name: 'Electrician CRM - TradeSuite',
+      name: 'Electrician CRM - Cypress Signal',
       description: 'CRM software built for electrical contractors. Manage service calls, panel upgrades, estimates, and invoicing.',
     },
     plumber: {
-      name: 'Plumber CRM - TradeSuite',
+      name: 'Plumber CRM - Cypress Signal',
       description: 'CRM software built for plumbing contractors. Manage service calls, installations, estimates, and invoicing.',
     },
     hvac: {
-      name: 'HVAC CRM - TradeSuite',
+      name: 'HVAC CRM - Cypress Signal',
       description: 'CRM software built for HVAC contractors. Manage service calls, maintenance contracts, and installations.',
     },
     landscaper: {
-      name: 'Landscaper CRM - TradeSuite',
+      name: 'Landscaper CRM - Cypress Signal',
       description: 'CRM software built for landscaping businesses. Manage maintenance contracts, design projects, and crews.',
     },
     roofer: {
-      name: 'Roofer CRM - TradeSuite',
+      name: 'Roofer CRM - Cypress Signal',
       description: 'CRM software built for roofing contractors. Manage inspections, estimates, insurance claims, and invoicing.',
     },
   };
@@ -178,7 +178,7 @@ export function getTradeSchema(trade: string): LocalBusinessSchema & { softwareA
     '@type': 'LocalBusiness',
     name: data.name,
     description: data.description,
-    url: `https://tradesuite.com/${trade}`,
+    url: `https://cypress-signal.com/${trade}`,
     softwareApp: getSoftwareSchema(),
   };
 }
@@ -191,34 +191,34 @@ export function getFAQSchema(): FAQSchema {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'What trades does TradeSuite support?',
+        name: 'What trades does Cypress Signal support?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'TradeSuite supports electricians, plumbers, HVAC contractors, landscapers, and roofers with trade-specific features and workflows.',
+          text: 'Cypress Signal supports electricians, plumbers, HVAC contractors, landscapers, and roofers with trade-specific features and workflows.',
         },
       },
       {
         '@type': 'Question',
-        name: 'How much does TradeSuite cost?',
+        name: 'How much does Cypress Signal cost?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'TradeSuite offers flexible pricing starting at $29/month for the Starter plan. Professional plans start at $79/month, and Enterprise plans are available for larger teams.',
+          text: 'Cypress Signal offers flexible pricing starting at $29/month for the Starter plan. Professional plans start at $79/month, and Enterprise plans are available for larger teams.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Does TradeSuite integrate with QuickBooks?',
+        name: 'Does Cypress Signal integrate with QuickBooks?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, TradeSuite integrates seamlessly with QuickBooks for accounting, allowing you to sync invoices, estimates, and client data.',
+          text: 'Yes, Cypress Signal integrates seamlessly with QuickBooks for accounting, allowing you to sync invoices, estimates, and client data.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Can I send estimates and invoices from TradeSuite?',
+        name: 'Can I send estimates and invoices from Cypress Signal?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, TradeSuite includes professional estimate and invoice templates that you can customize with your branding. Send via email or SMS and track when clients view them.',
+          text: 'Yes, Cypress Signal includes professional estimate and invoice templates that you can customize with your branding. Send via email or SMS and track when clients view them.',
         },
       },
       {
@@ -226,7 +226,7 @@ export function getFAQSchema(): FAQSchema {
         name: 'Is there a mobile app?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'TradeSuite is fully responsive and works on any device. A dedicated mobile app for iOS and Android is coming soon.',
+          text: 'Cypress Signal is fully responsive and works on any device. A dedicated mobile app for iOS and Android is coming soon.',
         },
       },
     ],
@@ -242,7 +242,7 @@ export function getBreadcrumbSchema(items: Array<{ name: string; path: string }>
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `https://tradesuite.com${item.path}`,
+      item: `https://cypress-signal.com${item.path}`,
     })),
   };
 }

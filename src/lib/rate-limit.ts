@@ -9,28 +9,28 @@ export const authLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(5, '1 m'), // 5 requests per minute
   analytics: true,
-  prefix: 'tradesuite:auth',
+  prefix: 'cypress-signal:auth',
 });
 
 export const checkoutLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(3, '1 m'), // 3 checkout attempts per minute
   analytics: true,
-  prefix: 'tradesuite:checkout',
+  prefix: 'cypress-signal:checkout',
 });
 
 export const referralLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(10, '1 m'), // 10 referral operations per minute
   analytics: true,
-  prefix: 'tradesuite:referral',
+  prefix: 'cypress-signal:referral',
 });
 
 export const apiLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(100, '1 m'), // 100 requests per minute for general API
   analytics: true,
-  prefix: 'tradesuite:api',
+  prefix: 'cypress-signal:api',
 });
 
 // Helper to get client IP from request

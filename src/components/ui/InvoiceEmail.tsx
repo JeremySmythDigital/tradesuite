@@ -125,7 +125,7 @@ Questions? Call ${data.companyPhone}
   </div>
   
   <div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;">
-    <p>Powered by TradeSuite</p>
+    <p>Powered by Cypress Signal</p>
   </div>
 </body>
 </html>

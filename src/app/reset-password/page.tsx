@@ -4,8 +4,8 @@ import { Briefcase } from 'lucide-react';
 import { ResetPasswordForm } from './ResetPasswordForm';
 
 export const metadata: Metadata = {
-  title: 'Reset Password - TradeSuite',
-  description: 'Choose a new password for your TradeSuite account.',
+  title: 'Reset Password - Cypress Signal',
+  description: 'Choose a new password for your Cypress Signal account.',
 };
 
 export default function ResetPasswordPage({

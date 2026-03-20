@@ -54,7 +54,7 @@ export function ROICalculator() {
               Calculate Your Time & Money Savings
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              See how much time and money you&apos;re losing each week to disorganization. TradeSuite helps you get it back.
+              See how much time and money you&apos;re losing each week to disorganization. Cypress Signal helps you get it back.
             </p>
           </div>
         </FadeIn>
@@ -201,7 +201,7 @@ export function ROICalculator() {
                   </div>
 
                   <div className="bg-white/20 rounded-xl p-4 text-center">
-                    <p className="text-sm opacity-80">Your ROI with TradeSuite</p>
+                    <p className="text-sm opacity-80">Your ROI with Cypress Signal</p>
                     <p className="text-4xl font-bold">{roi.toFixed(1)}x</p>
                     <p className="text-sm opacity-80 mt-1">
                       Every $1 spent returns ${roi.toFixed(0)}

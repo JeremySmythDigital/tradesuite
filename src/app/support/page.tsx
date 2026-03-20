@@ -3,11 +3,10 @@ import Link from 'next/link';
 import { Briefcase, Mail, Phone, MessageCircle, Book, Video } from 'lucide-react';
 import { FadeIn } from '@/components/ui/Motion';
 import { Footer } from '@/components/ui/Footer';
-import { LiveChatWidget } from '@/components/ui/LiveChatWidget';
 
 export const metadata: Metadata = {
-  title: 'Support - TradeSuite',
-  description: 'Get help with TradeSuite. Contact support, browse documentation, and learn how to use our platform.',
+  title: 'Support - Cypress Signal',
+  description: 'Get help with Cypress Signal. Contact support, browse documentation, and learn how to use our platform.',
 };
 
 export default function SupportPage() {
@@ -17,7 +16,7 @@ export default function SupportPage() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/" className="flex items-center gap-2">
             <Briefcase className="w-8 h-8 text-blue-600" />
-            <span className="font-bold text-2xl">TradeSuite</span>
+            <span className="font-bold text-2xl">Cypress Signal</span>
           </Link>
         </nav>
       </header>
@@ -55,8 +54,8 @@ export default function SupportPage() {
               </div>
               <h3 className="font-bold text-gray-900 mb-2">Email Support</h3>
               <p className="text-gray-600 mb-4">Send us an email and we'll respond within 24 hours.</p>
-              <a href="mailto:support@tradesuite.app" className="text-green-600 font-medium hover:text-green-700">
-                support@tradesuite.app →
+              <a href="mailto:support@cypress-signal.app" className="text-green-600 font-medium hover:text-green-700">
+                support@cypress-signal.app →
               </a>
             </div>
           </FadeIn>
@@ -123,7 +122,7 @@ export default function SupportPage() {
               { q: 'Do you offer refunds?', a: 'We offer a full refund within the first 30 days. After that, refunds are prorated based on unused time.' },
               { q: 'Is my data secure?', a: 'Absolutely. We use 256-bit SSL encryption, SOC 2 Type II compliance, and regular security audits.' },
               { q: 'How do I add team members?', a: 'Upgrade to Team ($79/mo) or Business ($149/mo) plan, then go to Settings → Team → Invite.' },
-              { q: 'Can I white-label TradeSuite?', a: 'Yes, on the Business plan. Upload your logo, customize colors, and use your own domain.' },
+              { q: 'Can I white-label Cypress Signal?', a: 'Yes, on the Business plan. Upload your logo, customize colors, and use your own domain.' },
             ].map((faq, i) => (
               <div key={i}>
                 <h3 className="font-medium text-gray-900 mb-1">{faq.q}</h3>
@@ -135,7 +134,6 @@ export default function SupportPage() {
       </main>
 
       <Footer />
-      <LiveChatWidget />
     </div>
   );
 }

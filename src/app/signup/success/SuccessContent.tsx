@@ -16,7 +16,7 @@ export function SuccessContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900">Welcome to TradeSuite!</h2>
+          <h2 className="mt-4 text-2xl font-bold text-gray-900">Welcome to Cypress Signal!</h2>
           <p className="mt-2 text-gray-600">Your subscription is now active.</p>
           {sessionId && <p className="mt-1 text-sm text-gray-500">Session ID: {sessionId}</p>}
           <div className="mt-6">

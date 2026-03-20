@@ -124,7 +124,7 @@ export default function ClientsPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-2xl">⚡</span>
-              <span className="font-bold text-xl">TradeSuite</span>
+              <span className="font-bold text-xl">Cypress Signal</span>
             </Link>
             <nav className="flex items-center gap-6">
               <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">Dashboard</Link>
