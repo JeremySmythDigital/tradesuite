@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// TradeSuite Price IDs (created 2026-03-18)
+// TradeSuite Price IDs (TEST MODE - created 2026-03-19)
 const PRICES: Record<string, string> = {
-  solo: 'price_1TCPJ79suOxAfgqhD8y7XaDt',      // $29/mo
-  team: 'price_1TCPJ89suOxAfgqhMSKDKTmX',       // $79/mo
-  business: 'price_1TCPJ89suOxAfgqhP5M4IFcp',   // $149/mo
+  solo: 'price_1TCtyV9suOxAfgqhVyhtKDEH',      // $29/mo
+  team: 'price_1TCtyW9suOxAfgqhOpgVccU5',       // $79/mo
+  business: 'price_1TCtyW9suOxAfgqhbi83ccUc',   // $149/mo
 };
 
 function getStripe(): Stripe {
